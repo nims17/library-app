@@ -8,6 +8,17 @@ export const VENMO_HANDLES = {
 
 export const SUGGESTED_TIP_AMOUNT = 5;
 
+// Real email addresses for new-book-request and return-recall notifications.
+export const LIBRARIAN_EMAILS = [
+  "Vivek.v.shah405@gmail.com",
+  "Siri.rallabhandi@gmail.com",
+];
+
+// Used to build links inside emails. Set NEXT_PUBLIC_SITE_URL in Vercel if
+// the deployment URL ever changes.
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://library-app-nimz17.vercel.app";
+
 export function venmoLink(username: string, amount?: number, note?: string) {
   const params = new URLSearchParams({ txn: "pay" });
   if (amount) params.set("amount", String(amount));

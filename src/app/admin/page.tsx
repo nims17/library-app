@@ -6,9 +6,10 @@ import {
   markReturned,
   manualCheckout,
   decideNewBookRequest,
-  addBook,
   removeBook,
+  setLoanRecall,
 } from "@/app/actions";
+import AddBookForm from "@/components/AddBookForm";
 
 export default async function AdminPage() {
   const profile = await getCurrentProfile();
@@ -49,19 +50,9 @@ export default async function AdminPage() {
   );
   const bookById = new Map((books || []).map((b) => [b.id, b]));
   const availableBooks = (books || []).filter((b) => b.status === "available");
-  const members = (profiles || []).filter((p) => p.role !== "admin");
-
-  async function addBookAction(formData: FormData) {
-    "use server";
-    await addBook({
-      title: String(formData.get("title") || "").trim(),
-      author: String(formData.get("author") || "").trim(),
-      description: String(formData.get("description") || "").trim(),
-      cover_url: String(formData.get("cover_url") || "").trim(),
-      genre: String(formData.get("genre") || "").trim(),
-      dewey_decimal: String(formData.get("dewey_decimal") || "").trim(),
-    });
-  }
+  // Librarians can borrow books too, so everyone with a profile is a
+  // possible "borrowed by" — not just non-admin members.
+  const borrowers = (profiles || []).filter((p) => p.display_name);
 
   async function manualCheckoutAction(formData: FormData) {
     "use server";
@@ -140,13 +131,21 @@ export default async function AdminPage() {
                 <p className="text-xs text-brown/50">
                   {nameById.get(loan.user_id) || "someone"} — since{" "}
                   {new Date(loan.checked_out_at).toLocaleDateString()}
+                  {loan.recall_requested_at ? " · recalled" : ""}
                 </p>
               </div>
-              <form action={markReturned.bind(null, loan.id, loan.book_id)}>
-                <button className="rounded-sm border border-brown/40 px-3 py-1.5 font-stamp text-[10px] tracking-widest text-brown hover:bg-parchment">
-                  MARK RETURNED
-                </button>
-              </form>
+              <div className="flex gap-2">
+                <form action={setLoanRecall.bind(null, loan.id, !loan.recall_requested_at)}>
+                  <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
+                    {loan.recall_requested_at ? "CANCEL RECALL" : "ASK FOR IT BACK"}
+                  </button>
+                </form>
+                <form action={markReturned.bind(null, loan.id, loan.book_id)}>
+                  <button className="rounded-sm border border-brown/40 px-3 py-1.5 font-stamp text-[10px] tracking-widest text-brown hover:bg-parchment">
+                    MARK RETURNED
+                  </button>
+                </form>
+              </div>
             </div>
           ))}
           {(!activeLoans || activeLoans.length === 0) && (
@@ -190,9 +189,10 @@ export default async function AdminPage() {
               required
               className="rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
             >
-              {members.map((m) => (
+              {borrowers.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.display_name || "(hasn't set their name yet)"}
+                  {m.display_name}
+                  {m.role === "admin" ? " (librarian)" : ""}
                 </option>
               ))}
             </select>
@@ -256,47 +256,7 @@ export default async function AdminPage() {
       {/* Add a book */}
       <section>
         <h2 className="mb-3 font-serif text-lg text-brown">Add a book</h2>
-        <form
-          action={addBookAction}
-          className="grid grid-cols-1 gap-3 rounded-sm border border-brass/30 bg-card p-4 sm:grid-cols-2"
-        >
-          <input
-            name="title"
-            placeholder="Title"
-            required
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"
-          />
-          <input
-            name="author"
-            placeholder="Author"
-            required
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"
-          />
-          <input
-            name="genre"
-            placeholder="Genre"
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"
-          />
-          <input
-            name="dewey_decimal"
-            placeholder="Dewey Decimal (e.g. 813.54)"
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"
-          />
-          <input
-            name="cover_url"
-            placeholder="Cover image URL (optional)"
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown sm:col-span-2"
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            rows={2}
-            className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown sm:col-span-2"
-          />
-          <button className="rounded-sm bg-ink px-4 py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark sm:col-span-2">
-            ADD TO CATALOG
-          </button>
-        </form>
+        <AddBookForm />
       </section>
 
       {/* All books / remove */}

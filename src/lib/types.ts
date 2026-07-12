@@ -7,6 +7,9 @@ export type Profile = {
   member_since: string;
   currently_reading_book_id: string | null;
   want_to_read_book_id: string | null;
+  avatar_url: string | null;
+  is_public_librarian: boolean;
+  email: string | null;
 };
 
 export type BookStatus = "available" | "checked_out";
@@ -21,6 +24,7 @@ export type Book = {
   dewey_decimal: string | null;
   status: BookStatus;
   created_at: string;
+  page_count: number | null;
 };
 
 export type CheckoutRequestStatus = "pending" | "approved" | "denied";
@@ -42,6 +46,7 @@ export type Loan = {
   checked_out_at: string;
   returned_at: string | null;
   recorded_by: string | null;
+  recall_requested_at: string | null;
 };
 
 export type WaitlistEntry = {

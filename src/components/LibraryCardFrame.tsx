@@ -29,7 +29,7 @@ export default function LibraryCardFrame({
           Tabor Street Books
         </h1>
         <p className="mb-6 text-center font-stamp text-[11px] tracking-wide text-brown/60">
-          est. 2026 · a neighborhood library
+          Vivek and Lasya&apos;s Library Est. 2026
         </p>
 
         {children}

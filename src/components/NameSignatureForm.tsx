@@ -12,7 +12,19 @@ export default function NameSignatureForm({
   const signature = `${firstName} ${lastName}`.trim();
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} encType="multipart/form-data" className="space-y-4">
+      <div>
+        <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+          Photo (optional)
+        </label>
+        <input
+          type="file"
+          name="avatar"
+          accept="image/*"
+          className="w-full text-sm text-brown"
+        />
+      </div>
+
       <div className="flex gap-3">
         <div className="flex-1">
           <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">

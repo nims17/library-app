@@ -8,7 +8,12 @@ export default async function OnboardingPage() {
     const firstName = String(formData.get("first_name") || "").trim();
     const lastName = String(formData.get("last_name") || "").trim();
     if (!firstName || !lastName) return;
-    await completeOnboarding(firstName, lastName);
+    const avatar = formData.get("avatar");
+    await completeOnboarding(
+      firstName,
+      lastName,
+      avatar instanceof File ? avatar : null
+    );
   }
 
   return (
@@ -16,7 +21,8 @@ export default async function OnboardingPage() {
       <LibraryCardFrame eyebrow="WELCOME">
         <p className="mb-4 text-center text-sm text-brown/80">
           What&apos;s your name? This is what shows up on your library card,
-          your reviews, and the leaderboard.
+          your reviews, and the leaderboard. Add a photo too, if you&apos;d
+          like.
         </p>
         <NameSignatureForm action={submit} />
       </LibraryCardFrame>

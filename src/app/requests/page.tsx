@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/current-user";
-import { submitNewBookRequest } from "@/app/actions";
+import RequestBookForm from "@/components/RequestBookForm";
 import { VENMO_HANDLES, SUGGESTED_TIP_AMOUNT, venmoLink } from "@/lib/config";
 
 export default async function RequestsPage() {
@@ -13,15 +13,6 @@ export default async function RequestsPage() {
     .select("*")
     .eq("requested_by", profile?.id || "")
     .order("created_at", { ascending: false });
-
-  async function submit(formData: FormData) {
-    "use server";
-    const title = String(formData.get("title") || "").trim();
-    const author = String(formData.get("author") || "").trim();
-    const note = String(formData.get("note") || "").trim();
-    if (!title) return;
-    await submitNewBookRequest(title, author, note);
-  }
 
   const statusColor: Record<string, string> = {
     pending: "bg-parchment text-brown",
@@ -38,52 +29,16 @@ export default async function RequestsPage() {
         Don&apos;t see it on the shelf? Put in a request for the librarian.
       </p>
 
-      <form
-        action={submit}
-        className="mb-4 space-y-3 rounded-sm border border-brass/40 bg-card p-4"
-      >
-        <div>
-          <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
-            Title
-          </label>
-          <input
-            name="title"
-            required
-            className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
-            Author (if known)
-          </label>
-          <input
-            name="author"
-            className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
-            Why you want it (optional)
-          </label>
-          <textarea
-            name="note"
-            rows={2}
-            className="w-full rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown focus:border-ink focus:outline-none"
-          />
-        </div>
-        <button className="rounded-sm bg-ink px-4 py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
-          SUBMIT REQUEST
-        </button>
-      </form>
+      <RequestBookForm />
 
       {/* Tip nudge */}
       <div className="mb-10 rounded-sm border border-dashed border-brass/50 bg-parchment/60 p-4">
         <p className="text-sm text-brown/80">
           Requesting something new? Consider tossing ${SUGGESTED_TIP_AMOUNT}{" "}
           into the book fund so Vivek and Lasya can actually go buy it —
-          details on the{" "}
-          <Link href="/librarians-corner" className="underline">
-            Librarian&apos;s Corner
+          details on{" "}
+          <Link href="/community" className="underline">
+            Tabor Street Community
           </Link>
           .
         </p>

@@ -35,29 +35,35 @@ export default async function Nav() {
           <Link href="/" className="hover:text-ink hover:underline">
             Browse
           </Link>
-          <Link href="/leaderboard" className="hover:text-ink hover:underline">
-            Leaderboard
+          <Link href="/community" className="hover:text-ink hover:underline">
+            Tabor Street Community
           </Link>
           <Link href="/requests" className="hover:text-ink hover:underline">
             Request a book
-          </Link>
-          <Link href="/card" className="hover:text-ink hover:underline">
-            My library card
-          </Link>
-          <Link href="/librarians-corner" className="hover:text-ink hover:underline">
-            Librarian&apos;s Corner
           </Link>
           {profile.role === "admin" && (
             <Link
               href="/admin"
               className="font-medium text-ink hover:underline"
             >
-              Admin desk
+              Librarian&apos;s Desk
             </Link>
           )}
-          <span className="font-hand text-lg text-brass">
+          <Link
+            href="/card"
+            className="flex items-center gap-1.5 font-hand text-lg text-brass hover:text-ink"
+            title="My library card"
+          >
+            {profile.avatar_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={profile.avatar_url}
+                alt=""
+                className="h-6 w-6 rounded-full border border-brass/50 object-cover"
+              />
+            )}
             {profile.display_name}
-          </span>
+          </Link>
           <form action={signOut}>
             <button className="rounded border border-brass/50 px-2 py-1 text-brown hover:bg-parchment">
               Sign out

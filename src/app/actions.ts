@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/current-user";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendEmail } from "@/lib/email";
+import { LIBRARIAN_EMAILS, SITE_URL } from "@/lib/config";
 
 // ---------- Auth ----------
 
@@ -13,7 +15,11 @@ export async function signOut() {
   redirect("/login");
 }
 
-export async function completeOnboarding(firstName: string, lastName: string) {
+export async function completeOnboarding(
+  firstName: string,
+  lastName: string,
+  avatar?: File | null
+) {
   const supabase = await createClient();
   const displayName = `${firstName} ${lastName}`.trim();
   if (!displayName) throw new Error("Name can't be empty");
@@ -26,8 +32,72 @@ export async function completeOnboarding(firstName: string, lastName: string) {
   });
   if (error) throw new Error(error.message);
 
+  if (avatar && avatar.size > 0) {
+    await uploadMyAvatar(avatar);
+  }
+
   revalidatePath("/", "layout");
   redirect("/");
+}
+
+// ---------- Settings ----------
+
+export async function updateMyName(firstName: string, lastName: string) {
+  const supabase = await createClient();
+  const displayName = `${firstName} ${lastName}`.trim();
+  if (!displayName) throw new Error("Name can't be empty");
+
+  const { error } = await supabase.rpc("update_my_display_name", {
+    new_display_name: displayName,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/", "layout");
+  revalidatePath("/card");
+}
+
+export async function updateMyEmail(newEmail: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ email: newEmail });
+  if (error) throw new Error(error.message);
+  revalidatePath("/card");
+}
+
+export async function updateMyPassword(newPassword: string) {
+  if (newPassword.length < 6) {
+    throw new Error("Password must be at least 6 characters");
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw new Error(error.message);
+}
+
+// Shared by onboarding and the settings menu — uploads to a path scoped to
+// the caller's own user id (required by the storage RLS policy) and then
+// records the public URL on the profile via a narrow RPC.
+export async function uploadMyAvatar(avatar: File) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not logged in");
+
+  const ext = avatar.name.split(".").pop() || "jpg";
+  const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(path, avatar, { upsert: true });
+  if (uploadError) throw new Error(uploadError.message);
+
+  const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+
+  const { error: rpcError } = await supabase.rpc("update_my_avatar", {
+    new_avatar_url: data.publicUrl,
+  });
+  if (rpcError) throw new Error(rpcError.message);
+
+  revalidatePath("/", "layout");
 }
 
 // ---------- Member actions ----------
@@ -84,22 +154,67 @@ export async function submitReview(
   if (error) throw new Error(error.message);
 
   revalidatePath(`/books/${bookId}`);
-  revalidatePath("/leaderboard");
+  revalidatePath("/");
+  revalidatePath("/community");
 }
 
 export async function submitNewBookRequest(
   title: string,
   author: string,
-  note: string
+  note: string,
+  googleBooksUrl?: string
 ) {
   const supabase = await createClient();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("Not logged in");
 
+  const normalizedTitle = title.trim().toLowerCase();
+  if (!normalizedTitle) throw new Error("Title can't be empty");
+
+  // Already in the catalog?
+  const { data: existingBooks } = await supabase
+    .from("books")
+    .select("title");
+  if (
+    (existingBooks || []).some(
+      (b) => b.title.trim().toLowerCase() === normalizedTitle
+    )
+  ) {
+    throw new Error("That book is already in the catalog.");
+  }
+
+  // Already requested (and not declined, so a declined request can be
+  // asked for again later)?
+  const { data: existingRequests } = await supabase
+    .from("new_book_requests")
+    .select("title, status")
+    .neq("status", "declined");
+  if (
+    (existingRequests || []).some(
+      (r) => r.title.trim().toLowerCase() === normalizedTitle
+    )
+  ) {
+    throw new Error("Someone already requested that book.");
+  }
+
+  const fullNote = googleBooksUrl
+    ? `${note}${note ? "\n\n" : ""}Confirmed on Google Books: ${googleBooksUrl}`
+    : note;
+
   const { error } = await supabase
     .from("new_book_requests")
-    .insert({ requested_by: profile.id, title, author, note });
+    .insert({ requested_by: profile.id, title, author, note: fullNote });
   if (error) throw new Error(error.message);
+
+  await sendEmail({
+    to: LIBRARIAN_EMAILS,
+    subject: `New book request: ${title}`,
+    text: `${profile.display_name || "Someone"} requested "${title}"${
+      author ? ` by ${author}` : ""
+    }.${note ? `\n\nTheir note: "${note}"` : ""}${
+      googleBooksUrl ? `\n\nGoogle Books: ${googleBooksUrl}` : ""
+    }\n\nReview it here: ${SITE_URL}/admin`,
+  });
 
   revalidatePath("/requests");
 }
@@ -115,6 +230,7 @@ export async function addBook(formData: {
   cover_url: string;
   genre: string;
   dewey_decimal: string;
+  page_count?: number | null;
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("books").insert(formData);
@@ -177,7 +293,7 @@ export async function markReturned(loanId: string, bookId: string) {
 
   const { error: loanError } = await supabase
     .from("loans")
-    .update({ returned_at: new Date().toISOString() })
+    .update({ returned_at: new Date().toISOString(), recall_requested_at: null })
     .eq("id", loanId);
   if (loanError) throw new Error(loanError.message);
 
@@ -190,6 +306,47 @@ export async function markReturned(loanId: string, bookId: string) {
   revalidatePath("/admin");
   revalidatePath("/");
   revalidatePath(`/books/${bookId}`);
+  revalidatePath("/card");
+}
+
+export async function setLoanRecall(loanId: string, recall: boolean) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.rpc("set_loan_recall", {
+    loan_id: loanId,
+    recall,
+  });
+  if (error) throw new Error(error.message);
+
+  if (recall) {
+    const { data: loan } = await supabase
+      .from("loans")
+      .select("user_id, book:books(title)")
+      .eq("id", loanId)
+      .single();
+
+    if (loan) {
+      const { data: borrower } = await supabase
+        .from("profiles")
+        .select("email, display_name")
+        .eq("id", loan.user_id)
+        .single();
+
+      if (borrower?.email) {
+        const bookTitle =
+          (loan.book as unknown as { title: string } | null)?.title ||
+          "your book";
+        await sendEmail({
+          to: borrower.email,
+          subject: `Could you bring back "${bookTitle}"?`,
+          text: `Hi ${borrower.display_name || "there"},\n\nThe librarians could use "${bookTitle}" back on the shelf when you get a chance — someone else might be waiting on it.\n\nThanks!\n${SITE_URL}/card`,
+        });
+      }
+    }
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/card");
 }
 
 export async function manualCheckout(bookId: string, userId: string) {
@@ -238,7 +395,7 @@ export async function addLibrarianPost(title: string, body: string) {
     .insert({ author_id: profile.id, title: title || null, body });
   if (error) throw new Error(error.message);
 
-  revalidatePath("/librarians-corner");
+  revalidatePath("/community");
 }
 
 export async function deleteLibrarianPost(postId: string) {
@@ -249,7 +406,7 @@ export async function deleteLibrarianPost(postId: string) {
     .eq("id", postId);
   if (error) throw new Error(error.message);
 
-  revalidatePath("/librarians-corner");
+  revalidatePath("/community");
 }
 
 export async function updateReadingStatus(
@@ -266,7 +423,7 @@ export async function updateReadingStatus(
   });
   if (error) throw new Error(error.message);
 
-  revalidatePath("/librarians-corner");
+  revalidatePath("/community");
 }
 
 export async function logTip(amount: number, note: string) {
@@ -280,5 +437,5 @@ export async function logTip(amount: number, note: string) {
     .insert({ user_id: profile.id, amount, note: note || null });
   if (error) throw new Error(error.message);
 
-  revalidatePath("/librarians-corner");
+  revalidatePath("/community");
 }
