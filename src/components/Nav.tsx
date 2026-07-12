@@ -9,11 +9,13 @@ export default async function Nav() {
   // Mid-onboarding (no name set yet) — just show sign out, no other links.
   if (!profile.display_name) {
     return (
-      <header className="border-b-2 border-amber-900/20 bg-amber-50">
+      <header className="border-b-2 border-brass/40 bg-card">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <span className="font-serif text-lg text-amber-900">The Library</span>
+          <span className="font-serif text-lg text-brown">
+            Tabor Street Books
+          </span>
           <form action={signOut}>
-            <button className="rounded border border-amber-900/30 px-2 py-1 text-sm hover:bg-amber-100">
+            <button className="rounded border border-brass/50 px-2 py-1 text-sm text-brown hover:bg-parchment">
               Sign out
             </button>
           </form>
@@ -23,33 +25,41 @@ export default async function Nav() {
   }
 
   return (
-    <header className="border-b-2 border-amber-900/20 bg-amber-50">
+    <header className="border-b-2 border-brass/40 bg-card">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="font-serif text-lg text-amber-900">
-          The Library
+        <Link href="/" className="font-serif text-lg text-brown">
+          Tabor Street Books
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-4 text-sm text-amber-800">
-          <Link href="/" className="hover:underline">
+        <nav className="flex flex-wrap items-center gap-4 text-sm text-brown/80">
+          <Link href="/" className="hover:text-ink hover:underline">
             Browse
           </Link>
-          <Link href="/leaderboard" className="hover:underline">
+          <Link href="/leaderboard" className="hover:text-ink hover:underline">
             Leaderboard
           </Link>
-          <Link href="/requests" className="hover:underline">
+          <Link href="/requests" className="hover:text-ink hover:underline">
             Request a book
           </Link>
-          <Link href="/card" className="hover:underline">
+          <Link href="/card" className="hover:text-ink hover:underline">
             My library card
           </Link>
+          <Link href="/librarians-corner" className="hover:text-ink hover:underline">
+            Librarian&apos;s Corner
+          </Link>
           {profile.role === "admin" && (
-            <Link href="/admin" className="font-medium hover:underline">
+            <Link
+              href="/admin"
+              className="font-medium text-ink hover:underline"
+            >
               Admin desk
             </Link>
           )}
-          <span className="text-amber-600">{profile.display_name}</span>
+          <span className="font-hand text-lg text-brass">
+            {profile.display_name}
+          </span>
           <form action={signOut}>
-            <button className="rounded border border-amber-900/30 px-2 py-1 hover:bg-amber-100">
+            <button className="rounded border border-brass/50 px-2 py-1 text-brown hover:bg-parchment">
               Sign out
             </button>
           </form>

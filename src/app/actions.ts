@@ -225,3 +225,60 @@ export async function decideNewBookRequest(
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
 }
+
+// ---------- Librarian's Corner ----------
+
+export async function addLibrarianPost(title: string, body: string) {
+  const supabase = await createClient();
+  const profile = await getCurrentProfile();
+  if (!profile) throw new Error("Not logged in");
+
+  const { error } = await supabase
+    .from("librarian_posts")
+    .insert({ author_id: profile.id, title: title || null, body });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/librarians-corner");
+}
+
+export async function deleteLibrarianPost(postId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("librarian_posts")
+    .delete()
+    .eq("id", postId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/librarians-corner");
+}
+
+export async function updateReadingStatus(
+  currentlyReadingBookId: string | null,
+  wantToReadBookId: string | null
+) {
+  const supabase = await createClient();
+
+  // Goes through a narrow database function — it can only ever touch
+  // these two columns on your own row, and only if you're an admin.
+  const { error } = await supabase.rpc("update_my_reading_status", {
+    currently_reading: currentlyReadingBookId,
+    want_to_read: wantToReadBookId,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/librarians-corner");
+}
+
+export async function logTip(amount: number, note: string) {
+  const supabase = await createClient();
+  const profile = await getCurrentProfile();
+  if (!profile) throw new Error("Not logged in");
+  if (!(amount > 0)) throw new Error("Enter an amount greater than $0");
+
+  const { error } = await supabase
+    .from("tips")
+    .insert({ user_id: profile.id, amount, note: note || null });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/librarians-corner");
+}

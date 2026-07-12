@@ -1,24 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f2e8d0;
+  --foreground: #4a3324;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Vintage card-catalog palette */
+  --color-parchment: #f2e8d0;
+  --color-parchment-dark: #e7d8b3;
+  --color-card: #fbf4e3;
+  --color-ink: #7a2530;
+  --color-ink-dark: #5c1c24;
+  --color-brass: #a9823f;
+  --color-brown: #4a3324;
+  --color-shelf: #6b4429;
+  --color-shelf-dark: #43290f;
+
+  /* Fonts — remapping font-serif means every existing font-serif class
+     picks this up automatically. font-hand and font-stamp are new
+     utilities Tailwind generates from these theme keys. */
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-hand: var(--font-caveat), cursive;
+  --font-stamp: var(--font-special-elite), "Courier New", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f2e8d0;
+    --foreground: #4a3324;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Faint paper grain so the background isn't a flat color */
+  background-image:
+    radial-gradient(rgba(74, 51, 36, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(74, 51, 36, 0.04) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 2px 3px;
 }

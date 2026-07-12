@@ -5,6 +5,8 @@ export type Profile = {
   display_name: string | null;
   role: Role;
   member_since: string;
+  currently_reading_book_id: string | null;
+  want_to_read_book_id: string | null;
 };
 
 export type BookStatus = "available" | "checked_out";
@@ -67,5 +69,21 @@ export type Review = {
   user_id: string;
   rating: number | null;
   thoughts: string | null;
+  created_at: string;
+};
+
+export type LibrarianPost = {
+  id: string;
+  author_id: string;
+  title: string | null;
+  body: string;
+  created_at: string;
+};
+
+export type Tip = {
+  id: string;
+  user_id: string;
+  amount: number;
+  note: string | null;
   created_at: string;
 };

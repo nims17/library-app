@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import LibraryCardFrame from "@/components/LibraryCardFrame";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,12 +16,14 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
 
+  const signature = `${firstName} ${lastName}`.trim();
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const displayName = `${firstName} ${lastName}`.trim();
+    const displayName = signature;
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -47,73 +50,80 @@ export default function SignupPage() {
 
   if (checkEmail) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-amber-50 px-4">
-        <div className="w-full max-w-sm rounded-lg border-2 border-amber-900/20 bg-white p-8 text-center shadow-sm">
-          <h1 className="mb-2 font-serif text-2xl text-amber-900">
-            Almost there
-          </h1>
-          <p className="text-sm text-amber-700">
+      <main className="flex min-h-screen items-center justify-center px-4 py-12">
+        <LibraryCardFrame eyebrow="ALMOST THERE">
+          <p className="text-center text-sm text-brown/80">
             We sent a confirmation link to <strong>{email}</strong>. Click it,
             then come back and sign in.
           </p>
           <Link
             href="/login"
-            className="mt-6 inline-block text-sm text-amber-800 underline"
+            className="mt-6 block text-center text-sm text-ink underline"
           >
             Go to sign in
           </Link>
-        </div>
+        </LibraryCardFrame>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-amber-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border-2 border-amber-900/20 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-center font-serif text-2xl text-amber-900">
-          Get your library card
-        </h1>
-        <p className="mb-6 text-center text-sm text-amber-700">
-          You were invited to join the library — set up your account below.
-        </p>
-
+    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+      <LibraryCardFrame eyebrow="NEW BORROWER">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="mb-1 block text-sm text-amber-900">
+              <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
                 First name
               </label>
               <input
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+                className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
               />
             </div>
             <div className="flex-1">
-              <label className="mb-1 block text-sm text-amber-900">
+              <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
                 Last name
               </label>
               <input
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+                className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
               />
             </div>
           </div>
+
+          {/* Live "signing the card" preview */}
+          <div className="rounded-sm border border-dashed border-brass/50 bg-parchment/60 px-3 py-2">
+            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+              Signature
+            </p>
+            <p className="min-h-[2.25rem] font-hand text-3xl leading-tight text-ink">
+              {signature || (
+                <span className="text-base text-brown/30">
+                  your name will appear here
+                </span>
+              )}
+            </p>
+          </div>
+
           <div>
-            <label className="mb-1 block text-sm text-amber-900">Email</label>
+            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+              Email
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+              className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-amber-900">
+            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
               Password
             </label>
             <input
@@ -122,28 +132,28 @@ export default function SignupPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+              className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
             />
           </div>
 
-          {error && <p className="text-sm text-red-700">{error}</p>}
+          {error && <p className="text-sm text-ink">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-amber-900 py-2 text-sm font-medium text-white hover:bg-amber-800 disabled:opacity-50"
+            className="w-full rounded-sm bg-ink py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
           >
-            {loading ? "Making your card..." : "Create account"}
+            {loading ? "MAKING YOUR CARD..." : "CREATE ACCOUNT"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-amber-700">
+        <p className="mt-6 text-center text-xs text-brown/70">
           Already have a card?{" "}
           <Link href="/login" className="underline">
             Sign in
           </Link>
         </p>
-      </div>
+      </LibraryCardFrame>
     </main>
   );
 }

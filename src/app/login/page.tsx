@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import LibraryCardFrame from "@/components/LibraryCardFrame";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,55 +32,52 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-amber-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border-2 border-amber-900/20 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-center font-serif text-2xl text-amber-900">
-          The Library
-        </h1>
-        <p className="mb-6 text-center text-sm text-amber-700">
-          Sign in with your library card credentials
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+      <LibraryCardFrame eyebrow="RETURNING BORROWER">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-1 block text-sm text-amber-900">Email</label>
+            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+              Email
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+              className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-amber-900">Password</label>
+            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+              Password
+            </label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+              className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
             />
           </div>
 
-          {error && <p className="text-sm text-red-700">{error}</p>}
+          {error && <p className="text-sm text-ink">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-amber-900 py-2 text-sm font-medium text-white hover:bg-amber-800 disabled:opacity-50"
+            className="w-full rounded-sm bg-ink py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
           >
-            {loading ? "Checking library card..." : "Sign in"}
+            {loading ? "CHECKING CARD..." : "SIGN IN"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-amber-700">
+        <p className="mt-6 text-center text-xs text-brown/70">
           Don&apos;t have a card?{" "}
           <Link href="/signup" className="underline">
             Sign up
           </Link>
         </p>
-      </div>
+      </LibraryCardFrame>
     </main>
   );
 }
