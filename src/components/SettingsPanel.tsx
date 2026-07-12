@@ -40,7 +40,7 @@ export default function SettingsPanel({
       onClick={() => setOpen((v) => !v)}
       title="Settings"
       aria-label="Settings"
-      className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-red-700 text-parchment shadow-md transition-transform hover:scale-105 hover:bg-red-800"
+      className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-ink text-parchment shadow-md transition-transform hover:scale-105 hover:bg-ink-dark"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

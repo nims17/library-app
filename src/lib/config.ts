@@ -17,7 +17,7 @@ export const LIBRARIAN_EMAILS = [
 // Used to build links inside emails. Set NEXT_PUBLIC_SITE_URL in Vercel if
 // the deployment URL ever changes.
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://library-app-nimz17.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://taborstreetbooks.vercel.app";
 
 export function venmoLink(username: string, amount?: number, note?: string) {
   const params = new URLSearchParams({ txn: "pay" });
