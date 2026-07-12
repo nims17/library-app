@@ -99,89 +99,120 @@ export default async function BookDetailPage({
         </div>
 
         <div className="flex-1">
-          <h1 className="font-serif text-2xl text-amber-900">{book.title}</h1>
-          <p className="text-amber-700">{book.author}</p>
+          <h1 className="font-serif text-2xl text-brown">{book.title}</h1>
+          <p className="text-brown/70">{book.author}</p>
 
-          <div className="mt-2 flex flex-wrap gap-2 text-xs text-amber-800">
+          <div className="mt-2 flex flex-wrap gap-2 font-stamp text-[10px] tracking-wide text-brown/70">
             {book.genre && (
-              <span className="rounded-full bg-amber-100 px-2 py-0.5">
-                {book.genre}
+              <span className="rounded-full border border-brass/40 bg-card px-2 py-0.5">
+                {book.genre.toUpperCase()}
               </span>
             )}
             {book.dewey_decimal && (
-              <span className="rounded-full bg-amber-100 px-2 py-0.5">
-                Dewey {book.dewey_decimal}
+              <span className="rounded-full border border-brass/40 bg-card px-2 py-0.5">
+                DEWEY {book.dewey_decimal}
               </span>
             )}
             {avgRating && (
-              <span className="rounded-full bg-amber-100 px-2 py-0.5">
+              <span className="rounded-full border border-brass/40 bg-card px-2 py-0.5">
                 ★ {avgRating} ({reviews!.length})
               </span>
             )}
           </div>
 
           {book.description && (
-            <p className="mt-4 text-sm leading-relaxed text-amber-900">
+            <p className="mt-4 text-sm leading-relaxed text-brown/90">
               {book.description}
             </p>
           )}
 
-          <div className="mt-6 rounded-lg border border-amber-900/15 bg-white p-4">
+          <div className="mt-6 rounded-sm border border-brass/30 bg-card p-4">
             {book.status === "available" ? (
               <>
                 <p className="mb-2 text-sm font-medium text-green-800">
                   Available on the shelf
                 </p>
                 {myPendingRequest ? (
-                  <p className="text-sm text-amber-700">
+                  <p className="text-sm text-brown/70">
                     Your checkout request is waiting on the librarian.
                   </p>
                 ) : (
                   <form action={requestCheckoutAction}>
-                    <button className="rounded bg-amber-900 px-4 py-2 text-sm text-white hover:bg-amber-800">
-                      Request to check out
+                    <button className="rounded-sm bg-ink px-4 py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
+                      REQUEST TO CHECK OUT
                     </button>
                   </form>
                 )}
               </>
             ) : (
               <>
-                <p className="mb-2 text-sm font-medium text-amber-900">
-                  Checked out
-                  {activeLoan?.profile?.display_name
-                    ? ` by ${activeLoan.profile.display_name}`
-                    : ""}
-                  {activeLoan?.checked_out_at
-                    ? ` since ${new Date(
-                        activeLoan.checked_out_at
-                      ).toLocaleDateString()}`
-                    : ""}
-                </p>
+                <div className="mb-4 flex flex-wrap items-center gap-4">
+                  {/* Ink-stamp "checked out" mark */}
+                  <div className="-rotate-6 rounded-sm border-[3px] border-ink/80 px-3 py-1.5 text-center opacity-90 mix-blend-multiply">
+                    <p className="font-stamp text-sm tracking-[0.15em] text-ink">
+                      CHECKED OUT
+                    </p>
+                  </div>
+                  <div className="text-sm text-brown/80">
+                    {activeLoan?.profile?.display_name && (
+                      <p>by {activeLoan.profile.display_name}</p>
+                    )}
+                    {activeLoan?.checked_out_at && (
+                      <p className="text-xs text-brown/50">
+                        since{" "}
+                        {new Date(
+                          activeLoan.checked_out_at
+                        ).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
                 {myPosition ? (
                   <div className="flex items-center gap-3">
-                    <p className="text-sm text-amber-700">
+                    <p className="text-sm text-brown/70">
                       You&apos;re #{myPosition} on the wait list
                     </p>
                     <form action={leaveWaitlistAction}>
-                      <button className="text-xs text-amber-600 underline">
+                      <button className="text-xs text-ink underline">
                         Leave wait list
                       </button>
                     </form>
                   </div>
                 ) : (
                   <form action={joinWaitlistAction}>
-                    <button className="rounded border border-amber-900 px-4 py-2 text-sm text-amber-900 hover:bg-amber-100">
-                      Write your name on the wait list
+                    <button className="rounded-sm border border-ink px-4 py-2 font-stamp text-xs tracking-widest text-ink hover:bg-parchment">
+                      WRITE YOUR NAME ON THE WAIT LIST
                     </button>
                   </form>
                 )}
 
                 {waitlist && waitlist.length > 0 && (
-                  <p className="mt-2 text-xs text-amber-600">
-                    {waitlist.length} friend{waitlist.length > 1 ? "s" : ""}{" "}
-                    waiting
-                  </p>
+                  <div className="mt-4 rounded-sm border border-brass/30 bg-parchment/70 p-3">
+                    <p className="mb-2 font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+                      Wait list sign-up sheet
+                    </p>
+                    <div className="space-y-1.5">
+                      {waitlist.map((w, i) => (
+                        <div
+                          key={w.id}
+                          className="flex items-baseline gap-2 border-b border-brown/20 pb-1"
+                        >
+                          <span className="font-stamp text-[10px] text-brown/40">
+                            {i + 1}.
+                          </span>
+                          <span className="font-hand text-xl text-ink">
+                            {w.profile?.display_name || "a friend"}
+                          </span>
+                          {w.user_id === profile?.id && (
+                            <span className="ml-auto font-stamp text-[9px] text-brown/40">
+                              (you)
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </>
             )}
@@ -190,22 +221,22 @@ export default async function BookDetailPage({
       </div>
 
       <section className="mt-10">
-        <h2 className="mb-3 font-serif text-lg text-amber-900">
+        <h2 className="mb-3 font-serif text-lg text-brown">
           What friends thought
         </h2>
 
         <form
           action={submitReviewAction}
-          className="mb-6 rounded-lg border border-amber-900/15 bg-white p-4"
+          className="mb-6 rounded-sm border border-brass/30 bg-card p-4"
         >
-          <p className="mb-2 text-sm font-medium text-amber-900">
+          <p className="mb-2 text-sm font-medium text-brown">
             {myReview ? "Update your review" : "Leave a review"}
           </p>
           <div className="flex items-center gap-3">
             <select
               name="rating"
               defaultValue={myReview?.rating ?? 5}
-              className="rounded border border-amber-900/30 px-2 py-1 text-sm"
+              className="rounded border border-brown/30 bg-transparent px-2 py-1 text-sm text-brown"
             >
               {[5, 4, 3, 2, 1].map((n) => (
                 <option key={n} value={n}>
@@ -219,10 +250,10 @@ export default async function BookDetailPage({
             defaultValue={myReview?.thoughts ?? ""}
             placeholder="What did you think?"
             rows={2}
-            className="mt-2 w-full rounded border border-amber-900/30 px-3 py-2 text-sm focus:border-amber-700 focus:outline-none"
+            className="mt-2 w-full rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown focus:border-ink focus:outline-none"
           />
-          <button className="mt-2 rounded bg-amber-900 px-4 py-1.5 text-sm text-white hover:bg-amber-800">
-            Save review
+          <button className="mt-2 rounded-sm bg-ink px-4 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
+            SAVE REVIEW
           </button>
         </form>
 
@@ -232,21 +263,21 @@ export default async function BookDetailPage({
             .map((r) => (
               <div
                 key={r.id}
-                className="rounded-lg border border-amber-900/15 bg-white p-3"
+                className="rounded-sm border border-brass/30 bg-card p-3"
               >
-                <p className="text-sm font-medium text-amber-900">
+                <p className="text-sm font-medium text-brown">
                   {r.profile?.display_name}{" "}
-                  <span className="font-normal text-amber-600">
+                  <span className="font-normal text-brown/50">
                     {"★".repeat(r.rating || 0)}
                   </span>
                 </p>
                 {r.thoughts && (
-                  <p className="mt-1 text-sm text-amber-800">{r.thoughts}</p>
+                  <p className="mt-1 text-sm text-brown/80">{r.thoughts}</p>
                 )}
               </div>
             ))}
           {(!reviews || reviews.length === 0) && (
-            <p className="text-sm text-amber-600">No reviews yet — be the first.</p>
+            <p className="text-sm text-brown/50">No reviews yet — be the first.</p>
           )}
         </div>
       </section>

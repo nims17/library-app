@@ -47,27 +47,27 @@ export default async function LeaderboardPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="mb-1 font-serif text-2xl text-amber-900">Leaderboard</h1>
-      <p className="mb-6 text-sm text-amber-700">
-        Ranked by books read (and reviewed).
+      <h1 className="mb-1 font-serif text-2xl text-brown">Leaderboard</h1>
+      <p className="mb-6 font-stamp text-[11px] tracking-wide text-brown/60">
+        RANKED BY BOOKS READ (AND REVIEWED)
       </p>
 
       <div className="space-y-3">
         {ranked.map((entry, i) => (
           <div
             key={entry.userId}
-            className="rounded-lg border border-amber-900/15 bg-white p-4"
+            className="rounded-sm border border-brass/30 bg-card p-4"
           >
             <div className="flex items-center justify-between">
-              <p className="font-medium text-amber-900">
+              <p className="font-hand text-2xl text-ink">
                 {medal[i] ? `${medal[i]} ` : `${i + 1}. `}
                 {entry.name}
               </p>
-              <span className="text-sm text-amber-700">
+              <span className="font-stamp text-xs tracking-wide text-brown/60">
                 {entry.count} book{entry.count !== 1 ? "s" : ""}
               </span>
             </div>
-            <ul className="mt-2 space-y-0.5 text-xs text-amber-600">
+            <ul className="mt-2 space-y-0.5 text-xs text-brown/60">
               {entry.books.map((b, j) => (
                 <li key={j}>
                   {b.title}
@@ -78,7 +78,7 @@ export default async function LeaderboardPage() {
           </div>
         ))}
         {ranked.length === 0 && (
-          <p className="text-sm text-amber-600">
+          <p className="text-sm text-brown/60">
             No reviews yet — the leaderboard starts once people finish books.
           </p>
         )}

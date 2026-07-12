@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/current-user";
+import LibraryCardFrame from "@/components/LibraryCardFrame";
 
 export default async function LibraryCardPage() {
   const profile = await getCurrentProfile();
@@ -19,27 +20,26 @@ export default async function LibraryCardPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
-      <div className="mb-8 rounded-xl border-2 border-dashed border-amber-900/40 bg-white p-6">
-        <p className="text-xs uppercase tracking-widest text-amber-600">
-          Library Card
-        </p>
-        <p className="mt-1 font-serif text-2xl text-amber-900">
-          {profile.display_name}
-        </p>
-        <p className="mt-1 text-sm text-amber-700">
-          Member since{" "}
-          {new Date(profile.member_since).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-        <p className="mt-1 text-xs text-amber-500">
-          Card No. {profile.id.slice(0, 8).toUpperCase()}
-        </p>
+      <div className="mb-10 flex justify-center">
+        <LibraryCardFrame eyebrow="MEMBER'S LIBRARY CARD">
+          <p className="font-hand text-3xl text-ink">{profile.display_name}</p>
+          <p className="mt-2 font-stamp text-[11px] tracking-wide text-brown/60">
+            MEMBER SINCE{" "}
+            {new Date(profile.member_since)
+              .toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+              .toUpperCase()}
+          </p>
+          <p className="mt-1 font-stamp text-[10px] tracking-widest text-brown/40">
+            CARD NO. {profile.id.slice(0, 8).toUpperCase()}
+          </p>
+        </LibraryCardFrame>
       </div>
 
-      <h2 className="mb-3 font-serif text-lg text-amber-900">
+      <h2 className="mb-3 font-serif text-lg text-brown">
         Currently checked out
       </h2>
       <div className="mb-8 space-y-2">
@@ -47,22 +47,20 @@ export default async function LibraryCardPage() {
           <Link
             key={l.id}
             href={`/books/${l.book?.id}`}
-            className="block rounded-lg border border-amber-900/15 bg-white p-3 hover:shadow-sm"
+            className="block rounded-sm border border-brass/30 bg-card p-3 hover:shadow-sm"
           >
-            <p className="text-sm font-medium text-amber-900">
-              {l.book?.title}
-            </p>
-            <p className="text-xs text-amber-600">
+            <p className="text-sm font-medium text-brown">{l.book?.title}</p>
+            <p className="text-xs text-brown/50">
               Since {new Date(l.checked_out_at).toLocaleDateString()}
             </p>
           </Link>
         ))}
         {current.length === 0 && (
-          <p className="text-sm text-amber-600">Nothing checked out right now.</p>
+          <p className="text-sm text-brown/50">Nothing checked out right now.</p>
         )}
       </div>
 
-      <h2 className="mb-3 font-serif text-lg text-amber-900">
+      <h2 className="mb-3 font-serif text-lg text-brown">
         Borrowing history
       </h2>
       <div className="space-y-2">
@@ -70,19 +68,17 @@ export default async function LibraryCardPage() {
           <Link
             key={l.id}
             href={`/books/${l.book?.id}`}
-            className="block rounded-lg border border-amber-900/15 bg-white p-3 hover:shadow-sm"
+            className="block rounded-sm border border-brass/30 bg-card p-3 hover:shadow-sm"
           >
-            <p className="text-sm font-medium text-amber-900">
-              {l.book?.title}
-            </p>
-            <p className="text-xs text-amber-600">
+            <p className="text-sm font-medium text-brown">{l.book?.title}</p>
+            <p className="text-xs text-brown/50">
               {new Date(l.checked_out_at).toLocaleDateString()} →{" "}
               {new Date(l.returned_at!).toLocaleDateString()}
             </p>
           </Link>
         ))}
         {history.length === 0 && (
-          <p className="text-sm text-amber-600">No history yet.</p>
+          <p className="text-sm text-brown/50">No history yet.</p>
         )}
       </div>
     </main>

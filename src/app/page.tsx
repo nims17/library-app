@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Book } from "@/lib/types";
-import BookCover from "@/components/BookCover";
+import BookSpine from "@/components/BookSpine";
 
 type Grouping = "dewey" | "genre" | "author";
 
@@ -61,7 +61,12 @@ export default async function HomePage({
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-serif text-2xl text-amber-900">Browse the stacks</h1>
+        <div>
+          <h1 className="font-serif text-2xl text-brown">Browse the stacks</h1>
+          <p className="font-stamp text-[11px] tracking-wide text-brown/50">
+            {allBooks.length} volume{allBooks.length !== 1 ? "s" : ""} on the shelves
+          </p>
+        </div>
 
         <form className="flex gap-2" action="/">
           <input type="hidden" name="group" value={grouping} />
@@ -70,69 +75,57 @@ export default async function HomePage({
             name="q"
             defaultValue={q}
             placeholder="Search title or author..."
-            className="rounded border border-amber-900/30 px-3 py-1.5 text-sm focus:border-amber-700 focus:outline-none"
+            className="rounded-sm border border-brass/40 bg-card px-3 py-1.5 text-sm text-brown focus:border-ink focus:outline-none"
           />
-          <button className="rounded bg-amber-900 px-3 py-1.5 text-sm text-white hover:bg-amber-800">
-            Search
+          <button className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
+            SEARCH
           </button>
         </form>
       </div>
 
-      <div className="mb-8 flex gap-2 border-b border-amber-900/20 pb-2">
+      <div className="mb-8 flex gap-2 border-b-2 border-brass/30 pb-2">
         {tabs.map((tab) => (
           <Link
             key={tab.value}
             href={`/?group=${tab.value}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-            className={`rounded px-3 py-1.5 text-sm ${
+            className={`rounded-sm px-3 py-1.5 font-stamp text-xs tracking-widest ${
               grouping === tab.value
-                ? "bg-amber-900 text-white"
-                : "text-amber-800 hover:bg-amber-100"
+                ? "bg-ink text-parchment"
+                : "text-brown/70 hover:bg-card"
             }`}
           >
-            {tab.label}
+            {tab.label.toUpperCase()}
           </Link>
         ))}
       </div>
 
       {grouped.length === 0 && (
-        <p className="text-amber-700">
+        <p className="text-brown/60">
           No books found{query ? ` matching "${q}"` : ""} yet.
         </p>
       )}
 
-      <div className="space-y-8">
+      <div className="space-y-10">
         {grouped.map(([groupName, groupBooksList]) => (
           <section key={groupName}>
-            <h2 className="mb-3 font-serif text-lg text-amber-900">
-              {groupName}
-            </h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {groupBooksList.map((book) => (
-                <Link
-                  key={book.id}
-                  href={`/books/${book.id}`}
-                  className="flex gap-3 rounded-lg border border-amber-900/15 bg-white p-3 shadow-sm hover:shadow-md"
-                >
-                  <BookCover title={book.title} coverUrl={book.cover_url} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-amber-900">
-                      {book.title}
-                    </p>
-                    <p className="truncate text-sm text-amber-700">
-                      {book.author}
-                    </p>
-                    <span
-                      className={`mt-2 inline-block rounded-full px-2 py-0.5 text-xs ${
-                        book.status === "available"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-amber-200 text-amber-900"
-                      }`}
-                    >
-                      {book.status === "available" ? "Available" : "Checked out"}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            <div className="mb-2 flex items-baseline justify-between">
+              <h2 className="font-serif text-lg text-brown">{groupName}</h2>
+              <span className="font-stamp text-[10px] tracking-wide text-brown/40">
+                {groupBooksList.length} book
+                {groupBooksList.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            {/* The shelf itself: spines stand on a wooden plank */}
+            <div className="rounded-sm border border-brass/30 bg-parchment-dark/40 px-4 pt-5">
+              <div className="flex items-end gap-1.5 overflow-x-auto pb-0">
+                {groupBooksList.map((book) => (
+                  <BookSpine key={book.id} book={book} />
+                ))}
+              </div>
+              <div
+                className="mt-0 h-4 rounded-b-sm border-t border-black/10 bg-shelf shadow-[inset_0_3px_6px_rgba(0,0,0,0.35)]"
+              />
             </div>
           </section>
         ))}

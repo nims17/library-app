@@ -16,7 +16,7 @@ export default function BookCover({
   }
 
   return (
-    <div className="flex h-28 w-20 flex-shrink-0 items-center justify-center rounded bg-amber-800 text-center font-serif text-2xl text-amber-50 shadow">
+    <div className="flex h-28 w-20 flex-shrink-0 items-center justify-center rounded bg-shelf text-center font-serif text-2xl text-parchment shadow">
       {title.charAt(0).toUpperCase()}
     </div>
   );
