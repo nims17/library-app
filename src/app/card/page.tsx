@@ -47,7 +47,7 @@ export default async function LibraryCardPage() {
   const myRank = ranked.findIndex((r) => r.userId === profile.id) + 1;
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="relative mx-auto max-w-2xl px-4 py-8">
       <div className="mb-8 flex justify-center">
         <LibraryCardFrame eyebrow="MEMBER'S LIBRARY CARD">
           <div className="mb-3 flex justify-center">

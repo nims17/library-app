@@ -223,7 +223,7 @@ export default function AddBookForm() {
           capture="environment"
           onChange={handleCoverPhoto}
           disabled={uploadingCover}
-          className="text-sm text-brown"
+          className="text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[10px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
         />
         {uploadingCover && (
           <p className="mt-1 text-xs text-brown/50">Uploading...</p>
