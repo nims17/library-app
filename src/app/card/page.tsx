@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/current-user";
 import LibraryCardFrame from "@/components/LibraryCardFrame";
 import SettingsPanel from "@/components/SettingsPanel";
+import AvatarPrompt from "@/components/AvatarPrompt";
 import LoanReviewForm from "@/components/LoanReviewForm";
 import StarRating from "@/components/StarRating";
 import { daysSince } from "@/lib/time";
@@ -59,9 +60,7 @@ export default async function LibraryCardPage() {
                 className="h-20 w-20 rounded-full border-2 border-brass/50 object-cover"
               />
             ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-shelf font-serif text-3xl text-parchment">
-                {(profile.display_name || "?").charAt(0).toUpperCase()}
-              </div>
+              <AvatarPrompt displayName={profile.display_name} />
             )}
           </div>
           <p className="text-center font-hand text-3xl text-ink">
