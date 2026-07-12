@@ -20,9 +20,9 @@ export default async function OnboardingPage() {
     <main className="flex min-h-[70vh] items-center justify-center px-4 py-12">
       <LibraryCardFrame eyebrow="WELCOME">
         <p className="mb-4 text-center text-sm text-brown/80">
-          What&apos;s your name? This is what shows up on your library card,
-          your reviews, and the leaderboard. Add a photo too, if you&apos;d
-          like.
+          What&apos;s your name, and what do you look like? Both show up on
+          your library card, your reviews, and the leaderboard — a photo is
+          required to finish signing up.
         </p>
         <NameSignatureForm action={submit} />
       </LibraryCardFrame>

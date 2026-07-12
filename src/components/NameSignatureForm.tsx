@@ -15,12 +15,13 @@ export default function NameSignatureForm({
     <form action={action} encType="multipart/form-data" className="space-y-4">
       <div>
         <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
-          Photo (optional)
+          Photo
         </label>
         <input
           type="file"
           name="avatar"
           accept="image/*"
+          required
           className="w-full text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[10px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
         />
       </div>

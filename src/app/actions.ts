@@ -18,11 +18,18 @@ export async function signOut() {
 export async function completeOnboarding(
   firstName: string,
   lastName: string,
-  avatar?: File | null
+  avatar: File | null
 ) {
   const supabase = await createClient();
   const displayName = `${firstName} ${lastName}`.trim();
   if (!displayName) throw new Error("Name can't be empty");
+
+  // A profile photo is required when signing up — enforced here as well
+  // as with the `required` attribute on the file input, so it can't be
+  // skipped even if someone bypasses the client-side form.
+  if (!avatar || avatar.size === 0) {
+    throw new Error("A profile photo is required to get your library card.");
+  }
 
   // Goes through a narrow database function rather than updating the
   // profiles row directly — it can only ever set *your own* display
@@ -32,9 +39,7 @@ export async function completeOnboarding(
   });
   if (error) throw new Error(error.message);
 
-  if (avatar && avatar.size > 0) {
-    await uploadMyAvatar(avatar);
-  }
+  await uploadMyAvatar(avatar);
 
   revalidatePath("/", "layout");
   redirect("/");
