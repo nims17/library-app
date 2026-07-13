@@ -255,7 +255,11 @@ export default async function AdminPage() {
 
       {/* Add a book */}
       <section>
-        <h2 className="mb-3 font-serif text-lg text-brown">Add a book</h2>
+        <h2 className="mb-1 font-serif text-lg text-brown">Add a book</h2>
+        <p className="mb-3 text-sm text-brown/60">
+          Type in the title and author yourself, or just take a picture of
+          the cover and we&apos;ll fill in the details for you.
+        </p>
         <AddBookForm />
       </section>
 

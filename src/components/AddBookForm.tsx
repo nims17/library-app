@@ -28,13 +28,17 @@ export default function AddBookForm() {
   );
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [identifying, setIdentifying] = useState(false);
+  const [identifyError, setIdentifyError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
   const [duplicateNotice, setDuplicateNotice] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  async function lookUpOnGoogleBooks() {
-    if (!title.trim()) {
+  async function lookUpOnGoogleBooks(titleOverride?: string, authorOverride?: string) {
+    const searchTitle = (titleOverride ?? title).trim();
+    const searchAuthor = (authorOverride ?? author).trim();
+    if (!searchTitle) {
       setLookupError("Type a title first.");
       return;
     }
@@ -42,8 +46,8 @@ export default function AddBookForm() {
     setLookupError(null);
     setLookupResults(null);
     try {
-      const params = new URLSearchParams({ title: title.trim() });
-      if (author.trim()) params.set("author", author.trim());
+      const params = new URLSearchParams({ title: searchTitle });
+      if (searchAuthor) params.set("author", searchAuthor);
       const res = await fetch(`/api/lookup-book?${params.toString()}`);
       const json = await res.json();
       if (!res.ok) {
@@ -63,16 +67,17 @@ export default function AddBookForm() {
   }
 
   function applyLookupResult(r: LookupResult) {
-    // Title and author are always taken from the verified Google Books
-    // record — that gets the proper capitalization on the shelf even if
-    // the admin typed it in lowercase (like "nick bostrom"). The rest are
-    // supplementary fields, so those only fill in if left blank.
+    // The verified Google Books record is authoritative: title, author,
+    // cover art, description, genre, and page count are all overwritten
+    // with what Google Books returns — even if something was already
+    // typed, or a cover photo was already uploaded. The admin can still
+    // hand-edit any field afterward if it needs a tweak.
     if (r.title) setTitle(r.title);
     if (r.author) setAuthor(r.author);
-    if (!description.trim() && r.description) setDescription(r.description);
-    if (!genre.trim() && r.genre) setGenre(r.genre);
-    if (!coverUrl.trim() && r.cover_url) setCoverUrl(r.cover_url);
-    if (!pageCount.trim() && r.page_count) setPageCount(String(r.page_count));
+    if (r.description) setDescription(r.description);
+    if (r.genre) setGenre(r.genre);
+    if (r.cover_url) setCoverUrl(r.cover_url);
+    if (r.page_count) setPageCount(String(r.page_count));
     setLookupResults(null);
   }
 
@@ -95,6 +100,42 @@ export default function AddBookForm() {
       );
     } finally {
       setUploadingCover(false);
+    }
+
+    // Best-effort: try to read the title/author straight off the cover
+    // photo so the admin doesn't have to type it in. If this fails for any
+    // reason, it just leaves the fields as they were — nothing breaks.
+    setIdentifying(true);
+    setIdentifyError(null);
+    try {
+      const body = new FormData();
+      body.append("photo", file);
+      const res = await fetch("/api/identify-book", {
+        method: "POST",
+        body,
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setIdentifyError(json.error || "Couldn't identify that book.");
+      } else if (json.title) {
+        setTitle(json.title);
+        if (json.author) setAuthor(json.author);
+        setAdded(null);
+        setDuplicateNotice(null);
+        setSubmitError(null);
+        await lookUpOnGoogleBooks(json.title, json.author || "");
+      } else {
+        setIdentifyError(
+          json.error ||
+            "Couldn't make out the title from that photo — type it in manually."
+        );
+      }
+    } catch {
+      setIdentifyError(
+        "Couldn't identify the book from that photo — check your connection."
+      );
+    } finally {
+      setIdentifying(false);
     }
   }
 
@@ -174,15 +215,16 @@ export default function AddBookForm() {
       <div className="flex items-center gap-2">
         <button
           type="button"
-          onClick={lookUpOnGoogleBooks}
+          onClick={() => lookUpOnGoogleBooks()}
           disabled={lookingUp}
           className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment disabled:opacity-50"
         >
           {lookingUp ? "LOOKING UP..." : "LOOK UP ON GOOGLE BOOKS"}
         </button>
         <span className="text-xs text-brown/50">
-          Verified title/author replace what you typed (proper
-          capitalization); other fields fill in anything left blank.
+          Applying a match replaces the title, author, cover image,
+          description, genre, and page count with Google&apos;s verified
+          info — even if you&apos;d already typed or uploaded something.
         </span>
       </div>
 
@@ -246,17 +288,28 @@ export default function AddBookForm() {
 
       <div>
         <label className="mb-1 block text-xs text-brown/70">
-          Or upload a photo of the cover
+          Take or upload a photo of the cover — we&apos;ll try to identify the
+          book automatically (if it can&apos;t, just type the title in by
+          hand). If you look it up on Google Books afterward, that cover
+          image is used instead.
         </label>
         <input
           type="file"
           accept="image/*"
           onChange={handleCoverPhoto}
-          disabled={uploadingCover}
+          disabled={uploadingCover || identifying}
           className="text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[10px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
         />
         {uploadingCover && (
           <p className="mt-1 text-xs text-brown/50">Uploading...</p>
+        )}
+        {identifying && (
+          <p className="mt-1 text-xs text-brown/50">
+            Identifying the book from the photo...
+          </p>
+        )}
+        {identifyError && (
+          <p className="mt-1 text-xs text-ink">{identifyError}</p>
         )}
         {coverUrl && (
           // eslint-disable-next-line @next/next/no-img-element
