@@ -62,14 +62,47 @@ export default async function AdminPage() {
     await manualCheckout(bookId, userId);
   }
 
+  const pendingCount = pendingRequests?.length || 0;
+  const checkedOutCount = activeLoans?.length || 0;
+  const newRequestCount = (bookRequests || []).filter(
+    (r) => r.status === "pending"
+  ).length;
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 space-y-10">
-      <h1 className="font-serif text-2xl text-brown">Librarian&apos;s desk</h1>
+      <div>
+        <h1 className="font-serif text-2xl text-brown">Librarian&apos;s desk</h1>
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
+            <p className="font-serif text-2xl text-ink">{pendingCount}</p>
+            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+              Waiting on you
+            </p>
+          </div>
+          <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
+            <p className="font-serif text-2xl text-ink">{checkedOutCount}</p>
+            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+              Checked out
+            </p>
+          </div>
+          <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
+            <p className="font-serif text-2xl text-ink">{newRequestCount}</p>
+            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+              New book requests
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Pending checkout requests */}
       <section>
         <h2 className="mb-3 font-serif text-lg text-brown">
           Checkout requests waiting on you
+          {pendingCount > 0 && (
+            <span className="ml-2 text-sm font-normal text-brown/40">
+              ({pendingCount})
+            </span>
+          )}
         </h2>
         <div className="space-y-2">
           {(pendingRequests || []).map((req) => (
@@ -265,19 +298,45 @@ export default async function AdminPage() {
 
       {/* All books / remove */}
       <section>
-        <h2 className="mb-3 font-serif text-lg text-brown">All books</h2>
+        <h2 className="mb-3 font-serif text-lg text-brown">
+          All books
+          <span className="ml-2 text-sm font-normal text-brown/40">
+            ({(books || []).length})
+          </span>
+        </h2>
         <div className="space-y-2">
           {(books || []).map((b) => (
             <div
               key={b.id}
-              className="flex items-center justify-between rounded-sm border border-brass/30 bg-card p-3"
+              className="flex items-center justify-between gap-3 rounded-sm border border-brass/30 bg-card p-3"
             >
-              <div>
-                <p className="text-sm font-medium text-brown">{b.title}</p>
-                <p className="text-xs text-brown/50">{b.author}</p>
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="relative flex-shrink-0 overflow-hidden rounded-r-sm rounded-l-[2px]"
+                  style={{ width: 32, height: 48 }}
+                >
+                  {b.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={b.cover_url}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-shelf font-serif text-xs text-parchment">
+                      {b.title.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-brown">
+                    {b.title}
+                  </p>
+                  <p className="truncate text-xs text-brown/50">{b.author}</p>
+                </div>
               </div>
               <form action={removeBook.bind(null, b.id)}>
-                <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
+                <button className="flex-shrink-0 rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
                   REMOVE
                 </button>
               </form>

@@ -9,7 +9,12 @@ export default async function Nav() {
   // Mid-onboarding (no name set yet) — just show sign out, no other links.
   if (!profile.display_name) {
     return (
-      <header className="border-b-2 border-brass/40 bg-card">
+      <header className="border-b-2 border-ink/70 bg-card shadow-sm">
+        <div className="border-b border-brass/30 bg-parchment-dark/40">
+          <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[9px] tracking-[0.3em] text-brown/50">
+            A NEIGHBORHOOD LIBRARY &middot; EST. 2026
+          </div>
+        </div>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <span className="font-serif text-lg text-brown">
             Tabor Street Books
@@ -25,7 +30,12 @@ export default async function Nav() {
   }
 
   return (
-    <header className="border-b-2 border-brass/40 bg-card">
+    <header className="border-b-2 border-ink/70 bg-card shadow-sm">
+      <div className="border-b border-brass/30 bg-parchment-dark/40">
+        <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[9px] tracking-[0.3em] text-brown/50">
+          A NEIGHBORHOOD LIBRARY &middot; EST. 2026
+        </div>
+      </div>
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="font-serif text-lg text-brown">
           Tabor Street Books

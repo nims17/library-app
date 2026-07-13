@@ -94,24 +94,36 @@ export default function BookDetailModal({
         className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-t-lg border border-brass/40 bg-parchment shadow-2xl sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 flex justify-end bg-parchment/95 p-2">
+        <div className="relative overflow-hidden">
+          {book.cover_url && (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={book.cover_url}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl"
+              />
+              <div className="absolute inset-0 bg-shelf-dark/80" />
+            </>
+          )}
           <button
             onClick={onClose}
-            className="rounded-full border border-brass/40 px-2.5 py-0.5 text-sm text-brown hover:bg-card"
+            className="absolute right-3 top-3 z-10 rounded-full bg-ink/70 px-2.5 py-0.5 text-sm text-parchment hover:bg-ink-dark"
           >
             ✕
           </button>
-        </div>
-
-        <div className="px-6 pb-6">
-          <div className="flex gap-5">
-            <div className="relative flex-shrink-0" style={{ width: 110, height: 165 }}>
+          <div className="relative flex gap-5 px-6 pb-6 pt-10">
+            <div
+              className="relative flex-shrink-0"
+              style={{ width: 120, height: 180 }}
+            >
               {book.cover_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={book.cover_url}
                   alt={book.title}
-                  className="h-full w-full rounded-r-sm rounded-l-[3px] object-cover shadow-lg"
+                  className="h-full w-full rounded-r-sm rounded-l-[3px] object-cover shadow-2xl"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center rounded-r-sm rounded-l-[3px] bg-shelf font-serif text-3xl text-parchment shadow-lg">
@@ -122,43 +134,67 @@ export default function BookDetailModal({
               <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-l from-white/70 to-transparent" />
             </div>
 
-            <div className="min-w-0 flex-1">
-              <h2 className="font-serif text-xl text-brown">{book.title}</h2>
-              <p className="text-brown/70">{book.author}</p>
+            <div
+              className={`min-w-0 flex-1 ${book.cover_url ? "text-parchment" : "text-brown"}`}
+            >
+              <h2 className="font-serif text-xl">{book.title}</h2>
+              <p className={book.cover_url ? "text-parchment/70" : "text-brown/70"}>
+                {book.author}
+              </p>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {communityAvg !== null && (
-                  <span className="flex items-center gap-1 text-xs text-brown/70">
+                  <span
+                    className={`flex items-center gap-1 text-xs ${book.cover_url ? "text-parchment/70" : "text-brown/70"}`}
+                  >
                     <StarRating value={communityAvg} size="text-sm" />({reviews.length})
                   </span>
                 )}
                 {librarianAvg !== null && (
-                  <span className="rounded-full border border-brass/40 bg-card px-2 py-0.5 font-stamp text-[9px] tracking-widest text-brown/70">
+                  <span
+                    className={`rounded-full border px-2 py-0.5 font-stamp text-[9px] tracking-widest ${
+                      book.cover_url
+                        ? "border-parchment/30 bg-black/20 text-parchment/80"
+                        : "border-brass/40 bg-card text-brown/70"
+                    }`}
+                  >
                     LIBRARIAN {librarianAvg.toFixed(1)}★
                   </span>
                 )}
               </div>
 
-              <div className="mt-2 flex flex-wrap gap-1.5 font-stamp text-[9px] tracking-wide text-brown/60">
+              <div
+                className={`mt-2 flex flex-wrap gap-1.5 font-stamp text-[9px] tracking-wide ${
+                  book.cover_url ? "text-parchment/60" : "text-brown/60"
+                }`}
+              >
                 {book.genre && (
-                  <span className="rounded-full border border-brass/40 px-2 py-0.5">
+                  <span
+                    className={`rounded-full border px-2 py-0.5 ${book.cover_url ? "border-parchment/30" : "border-brass/40"}`}
+                  >
                     {book.genre.toUpperCase()}
                   </span>
                 )}
                 {book.page_count && (
-                  <span className="rounded-full border border-brass/40 px-2 py-0.5">
+                  <span
+                    className={`rounded-full border px-2 py-0.5 ${book.cover_url ? "border-parchment/30" : "border-brass/40"}`}
+                  >
                     {book.page_count} PAGES
                   </span>
                 )}
                 {readingTime && (
-                  <span className="rounded-full border border-brass/40 px-2 py-0.5">
+                  <span
+                    className={`rounded-full border px-2 py-0.5 ${book.cover_url ? "border-parchment/30" : "border-brass/40"}`}
+                  >
                     {readingTime.toUpperCase()}
                   </span>
                 )}
               </div>
             </div>
           </div>
+        </div>
 
+        <div className="px-6 pb-6">
           {book.description && (
             <p className="mt-4 text-sm leading-relaxed text-brown/90">
               {book.description}

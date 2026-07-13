@@ -32,7 +32,16 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div className="absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-window.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-parchment/70" />
+      </div>
       <LibraryCardFrame eyebrow="RETURNING BORROWER">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>

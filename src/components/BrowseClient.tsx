@@ -8,9 +8,12 @@ import LibrarianBanner from "@/components/LibrarianBanner";
 
 type SortMode = "title" | "author" | "added" | "genre";
 
+// People-free "environment" shots only — this sits behind the featured book
+// so it should read as a room, not a portrait. The first is a cozy shelf
+// interior (Bell's Books, Palo Alto — Unsplash License, free to use).
 const HERO_BACKDROPS = [
-  "/images/library-nook-lights.jpg",
-  "/images/library-nook-reading.jpg",
+  "https://images.unsplash.com/photo-1747913647304-9f298ff28ff4?fm=jpg&q=75&w=2400&auto=format&fit=crop",
+  "/images/library-nook-window.jpg",
   "/images/library-nook-cozy.jpg",
 ];
 

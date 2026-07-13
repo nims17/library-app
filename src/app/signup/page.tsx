@@ -50,7 +50,16 @@ export default function SignupPage() {
 
   if (checkEmail) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4 py-12">
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div className="absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-cozy.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-parchment/70" />
+      </div>
         <LibraryCardFrame eyebrow="ALMOST THERE">
           <p className="text-center text-sm text-brown/80">
             We sent a confirmation link to <strong>{email}</strong>. Click it,
@@ -68,7 +77,16 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div className="absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-cozy.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-parchment/70" />
+      </div>
       <LibraryCardFrame eyebrow="NEW BORROWER">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-3">

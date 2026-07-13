@@ -17,7 +17,16 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center px-4 py-12">
+    <main className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-4 py-12">
+      <div className="absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-lights.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-parchment/75" />
+      </div>
       <LibraryCardFrame eyebrow="WELCOME">
         <p className="mb-4 text-center text-sm text-brown/80">
           What&apos;s your name, and what do you look like? Both show up on

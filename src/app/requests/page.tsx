@@ -21,7 +21,17 @@ export default async function RequestsPage() {
   };
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="relative mx-auto max-w-2xl px-4 py-8">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-reading.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-55"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-parchment/10 via-parchment/80 to-parchment" />
+      </div>
+
       <h1 className="mb-1 font-serif text-2xl text-brown">
         Request a new book
       </h1>
