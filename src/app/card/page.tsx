@@ -15,22 +15,33 @@ export default async function LibraryCardPage() {
 
   const supabase = await createClient();
 
-  const [{ data: loans }, { data: myReviews }, { data: allReviews }, { data: allLoans }, { data: profiles }] =
-    await Promise.all([
-      supabase
-        .from("loans")
-        .select("*, book:books(id, title, author)")
-        .eq("user_id", profile.id)
-        .order("checked_out_at", { ascending: false }),
-      supabase
-        .from("reviews")
-        .select("*, book:books(id, title)")
-        .eq("user_id", profile.id)
-        .order("created_at", { ascending: false }),
-      supabase.from("reviews").select("user_id, book_id"),
-      supabase.from("loans").select("user_id, book_id"),
-      supabase.from("profiles").select("id, display_name"),
-    ]);
+  const [
+    { data: loans },
+    { data: myReviews },
+    { data: allReviews },
+    { data: allLoans },
+    { data: profiles },
+    { data: myCheckoutRequests },
+  ] = await Promise.all([
+    supabase
+      .from("loans")
+      .select("*, book:books(id, title, author)")
+      .eq("user_id", profile.id)
+      .order("checked_out_at", { ascending: false }),
+    supabase
+      .from("reviews")
+      .select("*, book:books(id, title)")
+      .eq("user_id", profile.id)
+      .order("created_at", { ascending: false }),
+    supabase.from("reviews").select("user_id, book_id"),
+    supabase.from("loans").select("user_id, book_id"),
+    supabase.from("profiles").select("id, display_name"),
+    supabase
+      .from("checkout_requests")
+      .select("*, book:books(id, title)")
+      .eq("requested_by", profile.id)
+      .order("requested_at", { ascending: false }),
+  ]);
 
   const current = (loans || []).filter((l) => !l.returned_at);
   const history = (loans || []).filter((l) => l.returned_at);
@@ -142,6 +153,51 @@ export default async function LibraryCardPage() {
         ))}
         {current.length === 0 && (
           <p className="text-sm text-brown/50">Nothing checked out right now.</p>
+        )}
+      </div>
+
+      <h2 className="mb-3 font-serif text-lg text-brown">
+        Checkout requests
+      </h2>
+      <div className="mb-8 space-y-2">
+        {(myCheckoutRequests || []).map((r) => (
+          <div
+            key={r.id}
+            className="rounded-sm border border-brass/30 bg-card p-3"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <Link href={`/books/${r.book?.id}`} className="hover:underline">
+                <p className="text-sm font-medium text-brown">
+                  {r.book?.title}
+                </p>
+              </Link>
+              <span
+                className={`font-stamp text-[9px] tracking-widest ${
+                  r.status === "approved"
+                    ? "text-green-800"
+                    : r.status === "denied"
+                      ? "text-brown/40"
+                      : "text-ink"
+                }`}
+              >
+                {r.status === "approved"
+                  ? "APPROVED"
+                  : r.status === "denied"
+                    ? "DECLINED"
+                    : "PENDING"}
+              </span>
+            </div>
+            <p className="text-xs text-brown/50">
+              Requested {new Date(r.requested_at).toLocaleDateString()}
+              {r.status === "pending" && " · waiting on the librarian"}
+              {r.status === "approved" && " · now checked out"}
+            </p>
+          </div>
+        ))}
+        {(myCheckoutRequests || []).length === 0 && (
+          <p className="text-sm text-brown/50">
+            You haven&apos;t requested to check out any books yet.
+          </p>
         )}
       </div>
 
