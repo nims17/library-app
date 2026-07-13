@@ -152,7 +152,7 @@ export default function BookDetailModal({
                 )}
                 {librarianAvg !== null && (
                   <span
-                    className={`rounded-full border px-2 py-0.5 font-stamp text-[9px] tracking-widest ${
+                    className={`rounded-full border px-2 py-0.5 font-stamp text-[11px] tracking-widest ${
                       book.cover_url
                         ? "border-parchment/30 bg-black/20 text-parchment/80"
                         : "border-brass/40 bg-card text-brown/70"
@@ -164,7 +164,7 @@ export default function BookDetailModal({
               </div>
 
               <div
-                className={`mt-2 flex flex-wrap gap-1.5 font-stamp text-[9px] tracking-wide ${
+                className={`mt-2 flex flex-wrap gap-1.5 font-stamp text-[11px] tracking-wide ${
                   book.cover_url ? "text-parchment/60" : "text-brown/60"
                 }`}
               >
@@ -265,7 +265,7 @@ export default function BookDetailModal({
 
                 {waitlist.length > 0 && (
                   <div className="mt-3 rounded-sm border border-brass/30 bg-parchment/70 p-3">
-                    <p className="mb-2 font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+                    <p className="mb-2 font-stamp text-[11px] uppercase tracking-widest text-brown/50">
                       Wait list sign-up sheet
                     </p>
                     <div className="space-y-1.5">
@@ -274,14 +274,14 @@ export default function BookDetailModal({
                           key={w.id}
                           className="flex items-baseline gap-2 border-b border-brown/20 pb-1"
                         >
-                          <span className="font-stamp text-[10px] text-brown/40">
+                          <span className="font-stamp text-[12px] text-brown/40">
                             {i + 1}.
                           </span>
                           <span className="font-hand text-xl text-ink">
                             {w.profile?.display_name || "a friend"}
                           </span>
                           {w.user_id === currentUserId && (
-                            <span className="ml-auto font-stamp text-[9px] text-brown/40">
+                            <span className="ml-auto font-stamp text-[11px] text-brown/40">
                               (you)
                             </span>
                           )}
@@ -347,7 +347,7 @@ export default function BookDetailModal({
 
             {librarianReviews.length > 0 && (
               <div className="mb-3 space-y-2">
-                <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
+                <p className="font-stamp text-[12px] uppercase tracking-widest text-brown/50">
                   From the librarians
                 </p>
                 {librarianReviews.map((r) => (
@@ -369,7 +369,7 @@ export default function BookDetailModal({
 
             <div className="space-y-2">
               {memberReviews.length > 0 && (
-                <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
+                <p className="font-stamp text-[12px] uppercase tracking-widest text-brown/50">
                   From friends
                 </p>
               )}

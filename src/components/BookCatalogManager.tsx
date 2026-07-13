@@ -141,7 +141,7 @@ export default function BookCatalogManager({ books }: { books: BookRow[] }) {
         <button
           type="button"
           onClick={() => setFeaturedOnly((v) => !v)}
-          className={`rounded-sm px-2.5 py-1.5 font-stamp text-[10px] tracking-widest ${
+          className={`rounded-sm px-2.5 py-1.5 font-stamp text-[12px] tracking-widest ${
             featuredOnly
               ? "bg-ink text-parchment"
               : "border border-brass/40 text-brown/60 hover:bg-parchment"
@@ -207,8 +207,8 @@ export default function BookCatalogManager({ books }: { books: BookRow[] }) {
                   }
                   className={
                     isFeatured
-                      ? "rounded-sm border border-ink px-2.5 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment disabled:opacity-50"
-                      : "rounded-sm bg-ink px-2.5 py-1.5 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+                      ? "rounded-sm border border-ink px-2.5 py-1.5 font-stamp text-[12px] tracking-widest text-ink hover:bg-parchment disabled:opacity-50"
+                      : "rounded-sm bg-ink px-2.5 py-1.5 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
                   }
                 >
                   {featureBusy ? "..." : isFeatured ? "UNFEATURE" : "FEATURE"}
@@ -219,7 +219,7 @@ export default function BookCatalogManager({ books }: { books: BookRow[] }) {
                     <button
                       onClick={() => handleDelete(b)}
                       disabled={deleteBusy}
-                      className="rounded-sm bg-ink px-2.5 py-1.5 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+                      className="rounded-sm bg-ink px-2.5 py-1.5 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
                     >
                       {deleteBusy ? "..." : "CONFIRM"}
                     </button>
@@ -234,7 +234,7 @@ export default function BookCatalogManager({ books }: { books: BookRow[] }) {
                 ) : (
                   <button
                     onClick={() => setConfirmDeleteId(b.id)}
-                    className="rounded-sm border border-brown/30 px-2.5 py-1.5 font-stamp text-[10px] tracking-widest text-brown/70 hover:bg-parchment"
+                    className="rounded-sm border border-brown/30 px-2.5 py-1.5 font-stamp text-[12px] tracking-widest text-brown/70 hover:bg-parchment"
                   >
                     REMOVE
                   </button>

@@ -58,7 +58,7 @@ export default function LoanReviewForm({
             setSaved(true);
           })
         }
-        className="mt-1 rounded-sm bg-ink px-3 py-1 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+        className="mt-1 rounded-sm bg-ink px-3 py-1 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
       >
         SAVE REVIEW
       </button>

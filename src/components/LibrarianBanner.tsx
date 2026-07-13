@@ -27,7 +27,7 @@ export default function LibrarianBanner({
         />
       </div>
       <div className="flex flex-1 flex-col justify-center px-5 py-4">
-        <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
+        <p className="font-stamp text-[12px] uppercase tracking-widest text-brown/50">
           Vivek and Lasya&apos;s Library &middot; Est. 2026
         </p>
         <p className="mt-1.5 text-sm text-brown/80">

@@ -26,6 +26,26 @@
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-hand: var(--font-caveat), cursive;
   --font-stamp: var(--font-special-elite), "Courier New", monospace;
+
+  /* Bumped up from Tailwind's defaults across the board for legibility —
+     this changes every text-xs/sm/base/lg/etc class site-wide without
+     touching the spacing scale, so layouts don't shift, just the type. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.15rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.4rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6rem;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.8rem;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.85rem;
+  --text-2xl: 1.625rem;
+  --text-2xl--line-height: 2.1rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.35rem;
+  --text-4xl: 2.5rem;
+  --text-4xl--line-height: 2.6rem;
 }
 
 @media (prefers-color-scheme: dark) {

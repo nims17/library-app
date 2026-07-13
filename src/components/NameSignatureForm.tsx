@@ -14,7 +14,7 @@ export default function NameSignatureForm({
   return (
     <form action={action} encType="multipart/form-data" className="space-y-4">
       <div>
-        <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+        <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
           Photo
         </label>
         <input
@@ -22,13 +22,13 @@ export default function NameSignatureForm({
           name="avatar"
           accept="image/*"
           required
-          className="w-full text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[10px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
+          className="w-full text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[12px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
         />
       </div>
 
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+          <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
             First name
           </label>
           <input
@@ -41,7 +41,7 @@ export default function NameSignatureForm({
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+          <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
             Last name
           </label>
           <input
@@ -55,7 +55,7 @@ export default function NameSignatureForm({
       </div>
 
       <div className="rounded-sm border border-dashed border-brass/50 bg-parchment/60 px-3 py-2">
-        <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+        <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
           Signature
         </p>
         <p className="min-h-[2.25rem] font-hand text-3xl leading-tight text-ink">

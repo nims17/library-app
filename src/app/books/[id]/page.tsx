@@ -102,7 +102,7 @@ export default async function BookDetailPage({
           <h1 className="font-serif text-2xl text-brown">{book.title}</h1>
           <p className="text-brown/70">{book.author}</p>
 
-          <div className="mt-2 flex flex-wrap gap-2 font-stamp text-[10px] tracking-wide text-brown/70">
+          <div className="mt-2 flex flex-wrap gap-2 font-stamp text-[12px] tracking-wide text-brown/70">
             {book.genre && (
               <span className="rounded-full border border-brass/40 bg-card px-2 py-0.5">
                 {book.genre.toUpperCase()}
@@ -189,7 +189,7 @@ export default async function BookDetailPage({
 
                 {waitlist && waitlist.length > 0 && (
                   <div className="mt-4 rounded-sm border border-brass/30 bg-parchment/70 p-3">
-                    <p className="mb-2 font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+                    <p className="mb-2 font-stamp text-[11px] uppercase tracking-widest text-brown/50">
                       Wait list sign-up sheet
                     </p>
                     <div className="space-y-1.5">
@@ -198,14 +198,14 @@ export default async function BookDetailPage({
                           key={w.id}
                           className="flex items-baseline gap-2 border-b border-brown/20 pb-1"
                         >
-                          <span className="font-stamp text-[10px] text-brown/40">
+                          <span className="font-stamp text-[12px] text-brown/40">
                             {i + 1}.
                           </span>
                           <span className="font-hand text-xl text-ink">
                             {w.profile?.display_name || "a friend"}
                           </span>
                           {w.user_id === profile?.id && (
-                            <span className="ml-auto font-stamp text-[9px] text-brown/40">
+                            <span className="ml-auto font-stamp text-[11px] text-brown/40">
                               (you)
                             </span>
                           )}

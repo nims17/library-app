@@ -65,7 +65,7 @@ export default function SettingsPanel({
       {gearButton}
       <div className="mb-8 space-y-4 rounded-sm border border-brass/40 bg-card p-4">
       <div className="flex items-center justify-between">
-        <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
+        <p className="font-stamp text-[12px] uppercase tracking-widest text-brown/50">
           Settings
         </p>
         <button
@@ -103,7 +103,7 @@ export default function SettingsPanel({
                 await updateMyName(first || "", rest.join(" "));
               }, "Name updated.")
             }
-            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
           >
             SAVE
           </button>
@@ -130,7 +130,7 @@ export default function SettingsPanel({
                 "Check your inbox to confirm the new email."
               )
             }
-            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
           >
             SAVE
           </button>
@@ -160,7 +160,7 @@ export default function SettingsPanel({
                 setPassword("");
               }, "Password updated.")
             }
-            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+            className="rounded-sm bg-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
           >
             SAVE
           </button>
@@ -180,7 +180,7 @@ export default function SettingsPanel({
             if (!file) return;
             run(() => uploadMyAvatar(file), "Photo updated.");
           }}
-          className="text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[10px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
+          className="text-sm text-brown/70 file:mr-3 file:cursor-pointer file:rounded-sm file:border-0 file:bg-ink file:px-3 file:py-1.5 file:font-stamp file:text-[12px] file:tracking-widest file:text-parchment hover:file:bg-ink-dark"
         />
       </div>
       </div>

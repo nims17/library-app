@@ -101,7 +101,7 @@ export default async function LibraryCardPage() {
           <p className="text-center font-hand text-3xl text-ink">
             {profile.display_name}
           </p>
-          <p className="mt-2 text-center font-stamp text-[11px] tracking-wide text-brown/60">
+          <p className="mt-2 text-center font-stamp text-[13px] tracking-wide text-brown/60">
             MEMBER SINCE{" "}
             {new Date(profile.member_since)
               .toLocaleDateString(undefined, {
@@ -111,11 +111,11 @@ export default async function LibraryCardPage() {
               })
               .toUpperCase()}
           </p>
-          <p className="mt-1 text-center font-stamp text-[10px] tracking-widest text-brown/40">
+          <p className="mt-1 text-center font-stamp text-[12px] tracking-widest text-brown/40">
             CARD NO. {profile.id.slice(0, 8).toUpperCase()}
           </p>
           {myRank > 0 && (
-            <p className="mt-2 text-center font-stamp text-[10px] tracking-widest text-brown/50">
+            <p className="mt-2 text-center font-stamp text-[12px] tracking-widest text-brown/50">
               #{myRank} ON THE READERS LEADERBOARD
             </p>
           )}
@@ -129,7 +129,7 @@ export default async function LibraryCardPage() {
 
       {recalled.length > 0 && (
         <div className="mb-8 rounded-sm border-2 border-ink/60 bg-parchment/70 p-4">
-          <p className="font-stamp text-[10px] uppercase tracking-widest text-ink">
+          <p className="font-stamp text-[12px] uppercase tracking-widest text-ink">
             The librarians could use these back
           </p>
           <div className="mt-2 space-y-1">
@@ -182,7 +182,7 @@ export default async function LibraryCardPage() {
                 </p>
               </Link>
               <span
-                className={`font-stamp text-[9px] tracking-widest ${
+                className={`font-stamp text-[11px] tracking-widest ${
                   r.status === "approved"
                     ? "text-green-800"
                     : r.status === "denied"

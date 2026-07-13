@@ -91,7 +91,7 @@ export default function SignupPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+              <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
                 First name
               </label>
               <input
@@ -102,7 +102,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="flex-1">
-              <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+              <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
                 Last name
               </label>
               <input
@@ -116,7 +116,7 @@ export default function SignupPage() {
 
           {/* Live "signing the card" preview */}
           <div className="rounded-sm border border-dashed border-brass/50 bg-parchment/60 px-3 py-2">
-            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+            <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
               Signature
             </p>
             <p className="min-h-[2.25rem] font-hand text-3xl leading-tight text-ink">
@@ -129,7 +129,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+            <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
               Email
             </label>
             <input
@@ -141,7 +141,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+            <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
               Password
             </label>
             <input

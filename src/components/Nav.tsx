@@ -11,7 +11,7 @@ export default async function Nav() {
     return (
       <header className="border-b-2 border-ink/70 bg-card shadow-sm">
         <div className="border-b border-brass/30 bg-parchment-dark/40">
-          <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[9px] tracking-[0.3em] text-brown/50">
+          <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[11px] tracking-[0.3em] text-brown/50">
             A NEIGHBORHOOD LIBRARY &middot; EST. 2026
           </div>
         </div>
@@ -32,7 +32,7 @@ export default async function Nav() {
   return (
     <header className="border-b-2 border-ink/70 bg-card shadow-sm">
       <div className="border-b border-brass/30 bg-parchment-dark/40">
-        <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[9px] tracking-[0.3em] text-brown/50">
+        <div className="mx-auto max-w-5xl px-4 py-0.5 text-center font-stamp text-[11px] tracking-[0.3em] text-brown/50">
           A NEIGHBORHOOD LIBRARY &middot; EST. 2026
         </div>
       </div>

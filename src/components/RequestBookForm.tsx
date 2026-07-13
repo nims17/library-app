@@ -81,7 +81,7 @@ export default function RequestBookForm() {
       className="mb-4 space-y-3 rounded-sm border border-brass/40 bg-card p-4"
     >
       <div>
-        <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+        <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
           Title
         </label>
         <input
@@ -96,7 +96,7 @@ export default function RequestBookForm() {
         />
       </div>
       <div>
-        <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+        <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
           Author (if known)
         </label>
         <input
@@ -115,7 +115,7 @@ export default function RequestBookForm() {
           type="button"
           onClick={search}
           disabled={searching || !title.trim()}
-          className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment disabled:opacity-50"
+          className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-ink hover:bg-parchment disabled:opacity-50"
         >
           {searching ? "SEARCHING..." : "CONFIRM IT'S A REAL BOOK"}
         </button>
@@ -159,7 +159,7 @@ export default function RequestBookForm() {
       )}
 
       <div>
-        <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+        <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
           Why you want it (optional)
         </label>
         <textarea

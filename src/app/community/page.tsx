@@ -144,7 +144,7 @@ export default async function CommunityPage() {
                 </div>
 
                 <div className="mb-2">
-                  <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+                  <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
                     Currently reading
                   </p>
                   {reading ? (
@@ -209,7 +209,7 @@ export default async function CommunityPage() {
                     {post.title && (
                       <p className="font-serif text-lg text-brown">{post.title}</p>
                     )}
-                    <p className="font-stamp text-[10px] tracking-wide text-brown/50">
+                    <p className="font-stamp text-[12px] tracking-wide text-brown/50">
                       {post.author?.display_name || "A friend"}
                       {isLibrarianPost ? " · LIBRARIAN" : ""} —{" "}
                       {new Date(post.created_at).toLocaleDateString()}
@@ -253,7 +253,7 @@ export default async function CommunityPage() {
                 </p>
                 <StarRating value={avgRating} size="text-xs" />
               </div>
-              <p className="mt-1 text-[11px] text-brown/50">
+              <p className="mt-1 text-[13px] text-brown/50">
                 {book.genre || "Uncategorized"} · {count} review
                 {count !== 1 ? "s" : ""}
               </p>
@@ -281,7 +281,7 @@ export default async function CommunityPage() {
                   {entry.count} book{entry.count !== 1 ? "s" : ""}
                 </p>
                 {entry.recentCount > 0 && (
-                  <p className="text-[11px] text-green-800">
+                  <p className="text-[13px] text-green-800">
                     ↑ +{entry.recentCount} this week
                   </p>
                 )}

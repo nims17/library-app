@@ -9,10 +9,10 @@ export default function LibraryCardFrame({
     <div className="w-full max-w-sm -rotate-1 rounded-sm border border-brass/50 bg-card shadow-xl">
       {/* Top stripe, like the colored band across a real library card */}
       <div className="flex items-center justify-between rounded-t-sm bg-ink px-5 py-2">
-        <span className="font-stamp text-[10px] tracking-[0.2em] text-parchment">
+        <span className="font-stamp text-[12px] tracking-[0.2em] text-parchment">
           {eyebrow}
         </span>
-        <span className="font-stamp text-[10px] tracking-[0.2em] text-parchment/70">
+        <span className="font-stamp text-[12px] tracking-[0.2em] text-parchment/70">
           EST. 2026
         </span>
       </div>
@@ -36,7 +36,7 @@ export default function LibraryCardFrame({
         <h1 className="mb-1 text-center font-serif text-2xl text-brown">
           Tabor Street Books
         </h1>
-        <p className="mb-6 text-center font-stamp text-[11px] tracking-wide text-brown/60">
+        <p className="mb-6 text-center font-stamp text-[13px] tracking-wide text-brown/60">
           Vivek and Lasya&apos;s Library Est. 2026
         </p>
 

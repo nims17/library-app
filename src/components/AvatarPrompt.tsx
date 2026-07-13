@@ -53,7 +53,7 @@ export default function AvatarPrompt({
             d="M3 16.5V18a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1.5M7 9l5-5 5 5M12 4v13"
           />
         </svg>
-        <span className="font-stamp text-[8px] tracking-widest">
+        <span className="font-stamp text-[10px] tracking-widest">
           {isPending ? "..." : "ADD PHOTO"}
         </span>
         <input
@@ -66,11 +66,11 @@ export default function AvatarPrompt({
         />
       </button>
       {uploaded && (
-        <span className="text-[10px] font-medium text-green-800">
+        <span className="text-[12px] font-medium text-green-800">
           ✓ Photo added
         </span>
       )}
-      {error && <span className="text-[10px] text-ink">{error}</span>}
+      {error && <span className="text-[12px] text-ink">{error}</span>}
     </div>
   );
 }

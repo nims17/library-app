@@ -39,7 +39,7 @@ export default function BookSpine({ book }: { book: Book }) {
     >
       <span className="absolute inset-x-1 top-1.5 h-px bg-parchment/25" />
       <span
-        className="absolute inset-0 flex items-center justify-center overflow-hidden px-1 py-3 text-center font-serif text-[11px] leading-tight text-parchment"
+        className="absolute inset-0 flex items-center justify-center overflow-hidden px-1 py-3 text-center font-serif text-[13px] leading-tight text-parchment"
         style={{ writingMode: "vertical-rl" }}
       >
         {book.title}

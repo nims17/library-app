@@ -70,7 +70,7 @@ export default function MyReviewsList({
                 <button
                   onClick={() => handleDelete(r.id)}
                   disabled={isPending}
-                  className="rounded-sm bg-ink px-2 py-1 font-stamp text-[9px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+                  className="rounded-sm bg-ink px-2 py-1 font-stamp text-[11px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
                 >
                   {isPending && pendingId === r.id ? "DELETING..." : "CONFIRM"}
                 </button>

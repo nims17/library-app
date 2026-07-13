@@ -45,7 +45,7 @@ export default function LoginPage() {
       <LibraryCardFrame eyebrow="RETURNING BORROWER">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+            <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
               Email
             </label>
             <input
@@ -57,7 +57,7 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="mb-1 block font-stamp text-[10px] uppercase tracking-widest text-brown/60">
+            <label className="mb-1 block font-stamp text-[12px] uppercase tracking-widest text-brown/60">
               Password
             </label>
             <input

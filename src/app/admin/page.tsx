@@ -67,19 +67,19 @@ export default async function AdminPage() {
         <div className="mt-4 grid grid-cols-3 gap-3">
           <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
             <p className="font-serif text-2xl text-ink">{pendingCount}</p>
-            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+            <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
               Waiting on you
             </p>
           </div>
           <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
             <p className="font-serif text-2xl text-ink">{checkedOutCount}</p>
-            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+            <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
               Checked out
             </p>
           </div>
           <div className="rounded-sm border border-brass/30 bg-card p-3 text-center">
             <p className="font-serif text-2xl text-ink">{newRequestCount}</p>
-            <p className="font-stamp text-[9px] uppercase tracking-widest text-brown/50">
+            <p className="font-stamp text-[11px] uppercase tracking-widest text-brown/50">
               New book requests
             </p>
           </div>
@@ -120,12 +120,12 @@ export default async function AdminPage() {
                     req.requested_by
                   )}
                 >
-                  <button className="rounded-sm bg-green-800 px-3 py-1.5 font-stamp text-[10px] tracking-widest text-white hover:bg-green-900">
+                  <button className="rounded-sm bg-green-800 px-3 py-1.5 font-stamp text-[12px] tracking-widest text-white hover:bg-green-900">
                     APPROVE
                   </button>
                 </form>
                 <form action={denyCheckout.bind(null, req.id, req.book_id)}>
-                  <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
+                  <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-ink hover:bg-parchment">
                     DENY
                   </button>
                 </form>
@@ -187,12 +187,12 @@ export default async function AdminPage() {
               </div>
               <div className="flex flex-shrink-0 gap-2">
                 <form action={setLoanRecall.bind(null, loan.id, !loan.recall_requested_at)}>
-                  <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
+                  <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-ink hover:bg-parchment">
                     {loan.recall_requested_at ? "CANCEL RECALL" : "ASK FOR IT BACK"}
                   </button>
                 </form>
                 <form action={markReturned.bind(null, loan.id, loan.book_id)}>
-                  <button className="rounded-sm border border-brown/40 px-3 py-1.5 font-stamp text-[10px] tracking-widest text-brown hover:bg-parchment">
+                  <button className="rounded-sm border border-brown/40 px-3 py-1.5 font-stamp text-[12px] tracking-widest text-brown hover:bg-parchment">
                     MARK RETURNED
                   </button>
                 </form>
@@ -253,20 +253,20 @@ export default async function AdminPage() {
                   <form
                     action={decideNewBookRequest.bind(null, r.id, "added")}
                   >
-                    <button className="rounded-sm bg-green-800 px-3 py-1.5 font-stamp text-[10px] tracking-widest text-white hover:bg-green-900">
+                    <button className="rounded-sm bg-green-800 px-3 py-1.5 font-stamp text-[12px] tracking-widest text-white hover:bg-green-900">
                       MARK ADDED
                     </button>
                   </form>
                   <form
                     action={decideNewBookRequest.bind(null, r.id, "declined")}
                   >
-                    <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
+                    <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[12px] tracking-widest text-ink hover:bg-parchment">
                       DECLINE
                     </button>
                   </form>
                 </div>
               ) : (
-                <span className="font-stamp text-[10px] tracking-wide text-brown/50">
+                <span className="font-stamp text-[12px] tracking-wide text-brown/50">
                   {r.status.toUpperCase()}
                 </span>
               )}

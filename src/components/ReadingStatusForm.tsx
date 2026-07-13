@@ -36,7 +36,7 @@ export default function ReadingStatusForm({
       onSubmit={handleSubmit}
       className="mt-3 space-y-2 border-t border-brass/20 pt-3"
     >
-      <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
+      <label className="mb-1 block text-[12px] uppercase tracking-widest text-brown/50">
         Currently reading
       </label>
       <select
@@ -57,7 +57,7 @@ export default function ReadingStatusForm({
       <div className="flex items-center gap-3">
         <button
           disabled={isPending}
-          className="rounded-sm bg-ink px-3 py-1 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+          className="rounded-sm bg-ink px-3 py-1 font-stamp text-[12px] tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
         >
           {isPending ? "SAVING..." : "SAVE"}
         </button>

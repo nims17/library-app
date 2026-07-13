@@ -212,7 +212,7 @@ export default function BrowseClient({
               <BookThumb book={heroEntry.book} large />
             </button>
             <div className="min-w-0 pb-2 text-parchment">
-              <p className="mb-2 font-stamp text-[10px] tracking-[0.2em] text-brass">
+              <p className="mb-2 font-stamp text-[12px] tracking-[0.2em] text-brass">
                 LIBRARIAN&apos;S PICK
               </p>
               <h2 className="font-serif text-3xl leading-tight sm:text-4xl">
@@ -250,7 +250,7 @@ export default function BrowseClient({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-2xl text-brown">Browse the stacks</h1>
-          <p className="font-stamp text-[11px] tracking-wide text-brown/50">
+          <p className="font-stamp text-[13px] tracking-wide text-brown/50">
             {books.length} volume{books.length !== 1 ? "s" : ""} on the shelves
           </p>
         </div>

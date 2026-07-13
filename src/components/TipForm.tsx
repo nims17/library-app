@@ -36,7 +36,7 @@ export default function TipForm() {
     >
       <div className="flex flex-wrap items-end gap-2">
         <div>
-          <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
+          <label className="mb-1 block text-[12px] uppercase tracking-widest text-brown/50">
             I sent
           </label>
           <input
@@ -53,7 +53,7 @@ export default function TipForm() {
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
+          <label className="mb-1 block text-[12px] uppercase tracking-widest text-brown/50">
             Note (optional)
           </label>
           <input

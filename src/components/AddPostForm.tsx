@@ -32,7 +32,7 @@ export default function AddPostForm() {
       onSubmit={handleSubmit}
       className="mb-8 space-y-2 rounded-sm border border-brass/40 bg-card p-4"
     >
-      <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
+      <p className="font-stamp text-[12px] uppercase tracking-widest text-brown/50">
         Post a note
       </p>
       <input
