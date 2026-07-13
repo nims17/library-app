@@ -29,6 +29,7 @@ export default function AddBookForm() {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [added, setAdded] = useState<string | null>(null);
 
   async function lookUpOnGoogleBooks() {
     if (!title.trim()) {
@@ -95,9 +96,11 @@ export default function AddBookForm() {
     e.preventDefault();
     if (!title.trim() || !author.trim()) return;
     setSaving(true);
+    setAdded(null);
     try {
+      const addedTitle = title.trim();
       await addBook({
-        title: title.trim(),
+        title: addedTitle,
         author: author.trim(),
         description: description.trim(),
         cover_url: coverUrl.trim(),
@@ -114,6 +117,7 @@ export default function AddBookForm() {
       setPageCount("");
       setLookupResults(null);
       setLookupError(null);
+      setAdded(addedTitle);
     } finally {
       setSaving(false);
     }
@@ -124,10 +128,18 @@ export default function AddBookForm() {
       onSubmit={handleSubmit}
       className="space-y-3 rounded-sm border border-brass/30 bg-card p-4"
     >
+      {added && (
+        <p className="rounded-sm bg-green-50 px-2 py-1.5 text-xs font-medium text-green-800">
+          ✓ &quot;{added}&quot; added to the catalog.
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setAdded(null);
+          }}
           placeholder="Title"
           required
           className="rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"

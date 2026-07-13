@@ -59,18 +59,33 @@ export default function BookDetailModal({
   const readingTime = estimateReadingTime(book.page_count);
   const myWaitlistEntry = waitlist.find((w) => w.user_id === currentUserId);
 
+  const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [reviewSaved, setReviewSaved] = useState(false);
+
   function doRequestCheckout() {
-    startTransition(() => requestCheckout(book.id));
+    startTransition(async () => {
+      await requestCheckout(book.id);
+      setCheckoutMessage("Request sent — the librarian has been notified.");
+    });
   }
   function doJoinWaitlist() {
-    startTransition(() => joinWaitlist(book.id));
+    startTransition(async () => {
+      await joinWaitlist(book.id);
+      setCheckoutMessage("You're on the wait list.");
+    });
   }
   function doLeaveWaitlist() {
     if (!myWaitlistEntry) return;
-    startTransition(() => leaveWaitlist(myWaitlistEntry.id, book.id));
+    startTransition(async () => {
+      await leaveWaitlist(myWaitlistEntry.id, book.id);
+      setCheckoutMessage("You've left the wait list.");
+    });
   }
   function doSubmitReview() {
-    startTransition(() => submitReview(book.id, rating, thoughts));
+    startTransition(async () => {
+      await submitReview(book.id, rating, thoughts);
+      setReviewSaved(true);
+    });
   }
 
   return (
@@ -151,6 +166,11 @@ export default function BookDetailModal({
           )}
 
           <div className="mt-5 rounded-sm border border-brass/30 bg-card p-4">
+            {checkoutMessage && (
+              <p className="mb-2 rounded-sm bg-green-50 px-2 py-1 text-xs font-medium text-green-800">
+                ✓ {checkoutMessage}
+              </p>
+            )}
             {book.status === "available" ? (
               <>
                 <p className="mb-2 text-sm font-medium text-green-800">
@@ -254,21 +274,38 @@ export default function BookDetailModal({
                       ? "Update your review"
                       : "Leave a review"}
                 </p>
-                <StarRating value={rating} onChange={setRating} size="text-xl" />
+                <StarRating
+                  value={rating}
+                  onChange={(n) => {
+                    setRating(n);
+                    setReviewSaved(false);
+                  }}
+                  size="text-xl"
+                />
                 <textarea
                   value={thoughts}
-                  onChange={(e) => setThoughts(e.target.value)}
+                  onChange={(e) => {
+                    setThoughts(e.target.value);
+                    setReviewSaved(false);
+                  }}
                   placeholder="What did you think?"
                   rows={2}
                   className="mt-2 w-full rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown focus:border-ink focus:outline-none"
                 />
-                <button
-                  onClick={doSubmitReview}
-                  disabled={isPending}
-                  className="mt-2 rounded-sm bg-ink px-4 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
-                >
-                  SAVE REVIEW
-                </button>
+                <div className="mt-2 flex items-center gap-3">
+                  <button
+                    onClick={doSubmitReview}
+                    disabled={isPending}
+                    className="rounded-sm bg-ink px-4 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark disabled:opacity-50"
+                  >
+                    {isPending ? "SAVING..." : "SAVE REVIEW"}
+                  </button>
+                  {reviewSaved && (
+                    <span className="text-xs font-medium text-green-800">
+                      ✓ Review saved
+                    </span>
+                  )}
+                </div>
               </div>
             )}
 
