@@ -355,6 +355,38 @@ export async function removeBook(bookId: string) {
   revalidatePath("/admin");
 }
 
+const MAX_FEATURED_BOOKS = 3;
+
+// Lets a librarian hand-pick which books show in the Browse page's
+// recommended rail (up to MAX_FEATURED_BOOKS at once), replacing what used
+// to be an automatic "highest rated" calculation.
+export async function setFeatured(bookId: string, featured: boolean) {
+  const supabase = await createClient();
+
+  if (featured) {
+    const { count, error: countError } = await supabase
+      .from("books")
+      .select("id", { count: "exact", head: true })
+      .not("featured_at", "is", null)
+      .neq("id", bookId);
+    if (countError) throw new Error(countError.message);
+    if ((count || 0) >= MAX_FEATURED_BOOKS) {
+      throw new Error(
+        `Only ${MAX_FEATURED_BOOKS} books can be featured at once — remove one first.`
+      );
+    }
+  }
+
+  const { error } = await supabase
+    .from("books")
+    .update({ featured_at: featured ? new Date().toISOString() : null })
+    .eq("id", bookId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+}
+
 export async function approveCheckout(requestId: string, bookId: string, requestedBy: string) {
   const supabase = await createClient();
   const profile = await getCurrentProfile();

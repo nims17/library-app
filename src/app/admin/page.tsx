@@ -10,6 +10,7 @@ import {
 } from "@/app/actions";
 import AddBookForm from "@/components/AddBookForm";
 import ManualCheckoutForm from "@/components/ManualCheckoutForm";
+import FeaturedBooksManager from "@/components/FeaturedBooksManager";
 
 export default async function AdminPage() {
   const profile = await getCurrentProfile();
@@ -276,6 +277,26 @@ export default async function AdminPage() {
             <p className="text-sm text-brown/50">No requests yet.</p>
           )}
         </div>
+      </section>
+
+      {/* Recommended on Browse */}
+      <section>
+        <h2 className="mb-1 font-serif text-lg text-brown">
+          Recommended on Browse
+        </h2>
+        <p className="mb-3 text-sm text-brown/60">
+          Pick up to three books to feature in the Browse page&apos;s hero
+          and recommended rail.
+        </p>
+        <FeaturedBooksManager
+          books={(books || []).map((b) => ({
+            id: b.id,
+            title: b.title,
+            author: b.author,
+            cover_url: b.cover_url,
+            featured_at: b.featured_at,
+          }))}
+        />
       </section>
 
       {/* Add a book */}

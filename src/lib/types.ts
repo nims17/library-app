@@ -25,6 +25,7 @@ export type Book = {
   status: BookStatus;
   created_at: string;
   page_count: number | null;
+  featured_at: string | null;
 };
 
 export type CheckoutRequestStatus = "pending" | "approved" | "denied";

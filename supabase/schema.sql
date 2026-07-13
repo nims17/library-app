@@ -59,7 +59,10 @@ create table books (
   genre text,
   dewey_decimal text,
   status text not null default 'available' check (status in ('available', 'checked_out')),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Set by a librarian to feature this book on the Browse page (up to 3 at
+  -- once). Null = not featured. Doubles as the sort order (oldest first).
+  featured_at timestamptz
 );
 
 -- 3. CHECKOUT REQUESTS ------------------------------------------

@@ -118,13 +118,16 @@ export default function BrowseClient({
     });
   }, [books, query, genreFilter, ratingFilter]);
 
+  // Curated by a librarian on the admin desk (up to 3), rather than
+  // computed from ratings — order reflects the order they were picked in.
   const picks = useMemo(() => {
     return [...books]
-      .map((e) => ({ e, rating: communityRating(e.reviews) }))
-      .filter((x) => x.rating !== null)
-      .sort((a, b) => (b.rating as number) - (a.rating as number))
-      .slice(0, 5)
-      .map((x) => x.e);
+      .filter((e) => e.book.featured_at)
+      .sort(
+        (a, b) =>
+          new Date(a.book.featured_at as string).getTime() -
+          new Date(b.book.featured_at as string).getTime()
+      );
   }, [books]);
 
   const rows = useMemo(() => {
@@ -261,7 +264,7 @@ export default function BrowseClient({
       {picks.length > 0 && !query && (
         <section className="mb-10">
           <h2 className="mb-2 font-serif text-lg text-brown">
-            Librarian&apos;s recent picks
+            Librarian&apos;s picks
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-2">
             {picks.map(({ book, reviews }) => (
