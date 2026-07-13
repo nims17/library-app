@@ -25,6 +25,14 @@ export default function LibraryCardFrame({
           backgroundPosition: "0 118px",
         }}
       >
+        <div className="mb-3 flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/vivek-lasya-portrait.jpg"
+            alt="Vivek and Lasya"
+            className="h-20 w-20 rounded-full border-2 border-brass/60 object-cover shadow-md"
+          />
+        </div>
         <h1 className="mb-1 text-center font-serif text-2xl text-brown">
           Tabor Street Books
         </h1>
