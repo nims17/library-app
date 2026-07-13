@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/current-user";
 import BookCover from "@/components/BookCover";
 import StarRating from "@/components/StarRating";
+import LibrarianBanner from "@/components/LibrarianBanner";
 import {
   addLibrarianPost,
   deleteLibrarianPost,
@@ -42,6 +43,14 @@ export default async function CommunityPage() {
   const librarians = (profiles || []).filter((p) => p.is_public_librarian);
   const nameById = new Map((profiles || []).map((p) => [p.id, p.display_name]));
   const bookById = new Map((books || []).map((b) => [b.id, b]));
+  const bannerLibrarians = librarians.map((p) => ({
+    id: p.id,
+    displayName: p.display_name,
+    avatarUrl: p.avatar_url,
+    currentlyReading: p.currently_reading_book_id
+      ? bookById.get(p.currently_reading_book_id)?.title || null
+      : null,
+  }));
 
   // ---------- Top rated books (community rating, capped 25) ----------
   const reviewsByBook = new Map<string, NonNullable<typeof reviews>>();
@@ -108,11 +117,13 @@ export default async function CommunityPage() {
       <h1 className="mb-1 font-serif text-2xl text-brown">
         Tabor Street Community
       </h1>
-      <p className="mb-8 text-sm text-brown/70">
+      <p className="mb-6 text-sm text-brown/70">
         Vivek and Lasya opened up their shelves to the neighborhood — this is
         where everyone gathers to see what they&apos;re reading, swap
         thoughts on books, and keep the shelves growing.
       </p>
+
+      <LibrarianBanner librarians={bannerLibrarians} />
 
       {/* Librarian cards */}
       {librarians.length > 0 && (

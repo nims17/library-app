@@ -74,6 +74,16 @@ export default async function LibraryCardPage() {
 
   return (
     <main className="relative mx-auto max-w-2xl px-4 py-8">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/library-nook-window.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-parchment/20 via-parchment/80 to-parchment" />
+      </div>
+
       <div className="mb-8 flex justify-center">
         <LibraryCardFrame eyebrow="MEMBER'S LIBRARY CARD">
           <div className="mb-3 flex justify-center">

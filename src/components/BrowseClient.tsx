@@ -4,8 +4,22 @@ import { useMemo, useState } from "react";
 import type { Book } from "@/lib/types";
 import StarRating from "@/components/StarRating";
 import BookDetailModal, { type EnrichedBook } from "@/components/BookDetailModal";
+import LibrarianBanner from "@/components/LibrarianBanner";
 
 type SortMode = "title" | "author" | "added" | "genre";
+
+const HERO_BACKDROPS = [
+  "/images/library-nook-lights.jpg",
+  "/images/library-nook-reading.jpg",
+  "/images/library-nook-cozy.jpg",
+];
+
+type Librarian = {
+  id: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  currentlyReading: string | null;
+};
 
 function communityRating(reviews: EnrichedBook["reviews"]): number | null {
   if (!reviews || reviews.length === 0) return null;
@@ -27,11 +41,13 @@ function letterOf(value: string): string {
   return /[A-Z]/.test(ch) ? ch : "#";
 }
 
-function BookThumb({ book }: { book: Book }) {
+function BookThumb({ book, large }: { book: Book; large?: boolean }) {
+  const width = large ? 150 : 84;
+  const height = large ? 225 : 126;
   return (
     <div
-      className="relative flex-shrink-0 rounded-r-sm rounded-l-[2px] shadow-md transition-transform duration-150 group-hover:-translate-y-1"
-      style={{ width: 84, height: 126 }}
+      className="relative flex-shrink-0 rounded-r-sm rounded-l-[2px] shadow-md transition-transform duration-150 ease-out group-hover:-translate-y-1 group-hover:scale-[1.08] group-hover:shadow-2xl"
+      style={{ width, height }}
     >
       {book.cover_url ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -41,7 +57,10 @@ function BookThumb({ book }: { book: Book }) {
           className="h-full w-full rounded-r-sm rounded-l-[2px] object-cover"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-r-sm rounded-l-[2px] bg-shelf text-center font-serif text-lg text-parchment">
+        <div
+          className="flex h-full w-full items-center justify-center rounded-r-sm rounded-l-[2px] bg-shelf text-center font-serif text-parchment"
+          style={{ fontSize: large ? 28 : 18 }}
+        >
           {book.title.charAt(0).toUpperCase()}
         </div>
       )}
@@ -59,10 +78,12 @@ export default function BrowseClient({
   books,
   currentUserId,
   isPublicLibrarian,
+  librarians,
 }: {
   books: EnrichedBook[];
   currentUserId: string | null;
   isPublicLibrarian: boolean;
+  librarians: Librarian[];
 }) {
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("title");
@@ -154,8 +175,69 @@ export default function BrowseClient({
 
   const selected = books.find((e) => e.book.id === selectedId) || null;
 
+  const heroEntry = picks[0] || books[0] || null;
+  const heroBackdrop =
+    HERO_BACKDROPS[
+      heroEntry
+        ? heroEntry.book.id.charCodeAt(0) % HERO_BACKDROPS.length
+        : 0
+    ];
+  const heroRating = heroEntry ? communityRating(heroEntry.reviews) : null;
+
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <>
+      {heroEntry && !query && (
+        <section className="relative mb-10 h-[440px] w-full overflow-hidden sm:h-[500px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroBackdrop}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-shelf-dark via-shelf-dark/60 to-black/20" />
+          <div className="relative mx-auto flex h-full max-w-5xl items-end gap-6 px-4 pb-10 sm:px-4">
+            <button
+              onClick={() => setSelectedId(heroEntry.book.id)}
+              className="group flex-shrink-0 transition-transform duration-200 ease-out hover:-translate-y-1 hover:scale-105"
+            >
+              <BookThumb book={heroEntry.book} large />
+            </button>
+            <div className="min-w-0 pb-2 text-parchment">
+              <p className="mb-2 font-stamp text-[10px] tracking-[0.2em] text-brass">
+                LIBRARIAN&apos;S PICK
+              </p>
+              <h2 className="font-serif text-3xl leading-tight sm:text-4xl">
+                {heroEntry.book.title}
+              </h2>
+              <p className="mt-1 text-parchment/70">{heroEntry.book.author}</p>
+              {heroRating !== null && (
+                <div className="mt-2">
+                  <StarRating value={heroRating} size="text-sm" />
+                </div>
+              )}
+              {heroEntry.book.description && (
+                <p className="mt-3 hidden max-w-md text-sm leading-relaxed text-parchment/80 sm:block">
+                  {heroEntry.book.description.length > 160
+                    ? `${heroEntry.book.description.slice(0, 160)}...`
+                    : heroEntry.book.description}
+                </p>
+              )}
+              <div className="mt-4">
+                <button
+                  onClick={() => setSelectedId(heroEntry.book.id)}
+                  className="rounded-sm bg-ink px-4 py-2 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark"
+                >
+                  VIEW DETAILS
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <main className="mx-auto max-w-5xl px-4 py-8">
+      <LibrarianBanner librarians={librarians} />
+
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-2xl text-brown">Browse the stacks</h1>
@@ -284,6 +366,7 @@ export default function BrowseClient({
           onClose={() => setSelectedId(null)}
         />
       )}
-    </main>
+      </main>
+    </>
   );
 }

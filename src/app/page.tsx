@@ -12,6 +12,7 @@ export default async function HomePage() {
     { data: activeLoans },
     { data: waitlist },
     { data: myPendingRequests },
+    { data: librarianProfiles },
   ] = await Promise.all([
     supabase.from("books").select("*").order("title"),
     supabase
@@ -32,6 +33,10 @@ export default async function HomePage() {
           .eq("requested_by", profile.id)
           .eq("status", "pending")
       : Promise.resolve({ data: [] }),
+    supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url, currently_reading_book_id")
+      .eq("is_public_librarian", true),
   ]);
 
   const reviewsByBook = new Map<string, typeof reviews>();
@@ -51,6 +56,16 @@ export default async function HomePage() {
   const pendingRequestBookIds = new Set(
     (myPendingRequests || []).map((r) => r.book_id)
   );
+
+  const bookById = new Map((books || []).map((b) => [b.id, b]));
+  const librarians = (librarianProfiles || []).map((p) => ({
+    id: p.id,
+    displayName: p.display_name,
+    avatarUrl: p.avatar_url,
+    currentlyReading: p.currently_reading_book_id
+      ? bookById.get(p.currently_reading_book_id)?.title || null
+      : null,
+  }));
 
   const enriched = (books || []).map((book) => {
     const bookWaitlist = waitlistByBook.get(book.id) || [];
@@ -74,6 +89,7 @@ export default async function HomePage() {
       books={enriched}
       currentUserId={profile?.id || null}
       isPublicLibrarian={profile?.is_public_librarian || false}
+      librarians={librarians}
     />
   );
 }
