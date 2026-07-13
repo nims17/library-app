@@ -5,12 +5,11 @@ import {
   denyCheckout,
   markReturned,
   decideNewBookRequest,
-  removeBook,
   setLoanRecall,
 } from "@/app/actions";
 import AddBookForm from "@/components/AddBookForm";
 import ManualCheckoutForm from "@/components/ManualCheckoutForm";
-import FeaturedBooksManager from "@/components/FeaturedBooksManager";
+import BookCatalogManager from "@/components/BookCatalogManager";
 
 export default async function AdminPage() {
   const profile = await getCurrentProfile();
@@ -279,26 +278,6 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      {/* Recommended on Browse */}
-      <section>
-        <h2 className="mb-1 font-serif text-lg text-brown">
-          Recommended on Browse
-        </h2>
-        <p className="mb-3 text-sm text-brown/60">
-          Pick up to three books to feature in the Browse page&apos;s hero
-          and recommended rail.
-        </p>
-        <FeaturedBooksManager
-          books={(books || []).map((b) => ({
-            id: b.id,
-            title: b.title,
-            author: b.author,
-            cover_url: b.cover_url,
-            featured_at: b.featured_at,
-          }))}
-        />
-      </section>
-
       {/* Add a book */}
       <section>
         <h2 className="mb-1 font-serif text-lg text-brown">Add a book</h2>
@@ -309,53 +288,29 @@ export default async function AdminPage() {
         <AddBookForm />
       </section>
 
-      {/* All books / remove */}
+      {/* Manage the collection: feature on Browse, remove from catalog */}
       <section>
-        <h2 className="mb-3 font-serif text-lg text-brown">
-          All books
+        <h2 className="mb-1 font-serif text-lg text-brown">
+          Your collection
           <span className="ml-2 text-sm font-normal text-brown/40">
             ({(books || []).length})
           </span>
         </h2>
-        <div className="space-y-2">
-          {(books || []).map((b) => (
-            <div
-              key={b.id}
-              className="flex items-center justify-between gap-3 rounded-sm border border-brass/30 bg-card p-3"
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <div
-                  className="relative flex-shrink-0 overflow-hidden rounded-r-sm rounded-l-[2px]"
-                  style={{ width: 32, height: 48 }}
-                >
-                  {b.cover_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={b.cover_url}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-shelf font-serif text-xs text-parchment">
-                      {b.title.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-brown">
-                    {b.title}
-                  </p>
-                  <p className="truncate text-xs text-brown/50">{b.author}</p>
-                </div>
-              </div>
-              <form action={removeBook.bind(null, b.id)}>
-                <button className="flex-shrink-0 rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
-                  REMOVE
-                </button>
-              </form>
-            </div>
-          ))}
-        </div>
+        <p className="mb-3 text-sm text-brown/60">
+          Feature up to three books on the Browse page, or remove a book from
+          the catalog entirely.
+        </p>
+        <BookCatalogManager
+          books={(books || []).map((b) => ({
+            id: b.id,
+            title: b.title,
+            author: b.author,
+            cover_url: b.cover_url,
+            genre: b.genre,
+            status: b.status,
+            featured_at: b.featured_at,
+          }))}
+        />
       </section>
     </main>
   );

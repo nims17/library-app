@@ -181,7 +181,10 @@ export default function BrowseClient({
 
   const selected = books.find((e) => e.book.id === selectedId) || null;
 
-  const heroEntry = picks[0] || books[0] || null;
+  // Only show a hero when a librarian has actually featured something —
+  // no fallback to an arbitrary book, so "no recommendation" reads as
+  // no recommendation rather than a fake pick.
+  const heroEntry = picks[0] || null;
   const heroBackdrop =
     HERO_BACKDROPS[
       heroEntry
