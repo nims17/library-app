@@ -32,10 +32,20 @@ export default function LoanReviewForm({
 
   return (
     <div className="mt-2 rounded-sm border border-brass/30 bg-parchment/60 p-2">
-      <StarRating value={rating} onChange={setRating} size="text-lg" />
+      <StarRating
+        value={rating}
+        onChange={(v) => {
+          setRating(v);
+          setSaved(false);
+        }}
+        size="text-lg"
+      />
       <textarea
         value={thoughts}
-        onChange={(e) => setThoughts(e.target.value)}
+        onChange={(e) => {
+          setThoughts(e.target.value);
+          setSaved(false);
+        }}
         rows={2}
         placeholder="What did you think?"
         className="mt-1 w-full rounded border border-brown/30 bg-transparent px-2 py-1 text-sm text-brown focus:border-ink focus:outline-none"
@@ -52,7 +62,11 @@ export default function LoanReviewForm({
       >
         SAVE REVIEW
       </button>
-      {saved && <span className="ml-2 text-xs text-green-800">Saved.</span>}
+      {saved && (
+        <span className="ml-2 text-xs font-medium text-green-800">
+          ✓ Saved
+        </span>
+      )}
     </div>
   );
 }

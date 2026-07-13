@@ -4,12 +4,12 @@ import {
   approveCheckout,
   denyCheckout,
   markReturned,
-  manualCheckout,
   decideNewBookRequest,
   removeBook,
   setLoanRecall,
 } from "@/app/actions";
 import AddBookForm from "@/components/AddBookForm";
+import ManualCheckoutForm from "@/components/ManualCheckoutForm";
 
 export default async function AdminPage() {
   const profile = await getCurrentProfile();
@@ -53,14 +53,6 @@ export default async function AdminPage() {
   // Librarians can borrow books too, so everyone with a profile is a
   // possible "borrowed by" — not just non-admin members.
   const borrowers = (profiles || []).filter((p) => p.display_name);
-
-  async function manualCheckoutAction(formData: FormData) {
-    "use server";
-    const bookId = String(formData.get("book_id") || "");
-    const userId = String(formData.get("user_id") || "");
-    if (!bookId || !userId) return;
-    await manualCheckout(bookId, userId);
-  }
 
   const pendingCount = pendingRequests?.length || 0;
   const checkedOutCount = activeLoans?.length || 0;
@@ -152,22 +144,48 @@ export default async function AdminPage() {
           Currently checked out
         </h2>
         <div className="space-y-2">
-          {(activeLoans || []).map((loan) => (
+          {(activeLoans || []).map((loan) => {
+            const loanBook = bookById.get(loan.book_id);
+            return (
             <div
               key={loan.id}
-              className="flex items-center justify-between rounded-sm border border-brass/30 bg-card p-3"
+              className="flex items-center justify-between gap-3 rounded-sm border border-brass/30 bg-card p-3"
             >
-              <div>
-                <p className="text-sm font-medium text-brown">
-                  {bookById.get(loan.book_id)?.title || "Unknown book"}
-                </p>
-                <p className="text-xs text-brown/50">
-                  {nameById.get(loan.user_id) || "someone"} — since{" "}
-                  {new Date(loan.checked_out_at).toLocaleDateString()}
-                  {loan.recall_requested_at ? " · recalled" : ""}
-                </p>
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="relative flex-shrink-0 overflow-hidden rounded-r-sm rounded-l-[2px]"
+                  style={{ width: 32, height: 48 }}
+                >
+                  {loanBook?.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={loanBook.cover_url}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-shelf font-serif text-xs text-parchment">
+                      {(loanBook?.title || "?").charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-brown">
+                    {loanBook?.title || "Unknown book"}
+                  </p>
+                  {loanBook?.author && (
+                    <p className="truncate text-xs text-brown/60">
+                      {loanBook.author}
+                    </p>
+                  )}
+                  <p className="truncate text-xs text-brown/50">
+                    {nameById.get(loan.user_id) || "someone"} — since{" "}
+                    {new Date(loan.checked_out_at).toLocaleDateString()}
+                    {loan.recall_requested_at ? " · recalled" : ""}
+                  </p>
+                </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-shrink-0 gap-2">
                 <form action={setLoanRecall.bind(null, loan.id, !loan.recall_requested_at)}>
                   <button className="rounded-sm border border-ink px-3 py-1.5 font-stamp text-[10px] tracking-widest text-ink hover:bg-parchment">
                     {loan.recall_requested_at ? "CANCEL RECALL" : "ASK FOR IT BACK"}
@@ -180,7 +198,8 @@ export default async function AdminPage() {
                 </form>
               </div>
             </div>
-          ))}
+            );
+          })}
           {(!activeLoans || activeLoans.length === 0) && (
             <p className="text-sm text-brown/50">Everything&apos;s on the shelf.</p>
           )}
@@ -195,45 +214,18 @@ export default async function AdminPage() {
         <p className="mb-2 text-xs text-brown/50">
           For handing a book to someone in person, skipping the request step.
         </p>
-        <form
-          action={manualCheckoutAction}
-          className="flex flex-wrap items-end gap-3 rounded-sm border border-brass/30 bg-card p-4"
-        >
-          <div>
-            <label className="mb-1 block text-xs text-brown/70">Book</label>
-            <select
-              name="book_id"
-              required
-              className="rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
-            >
-              {availableBooks.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.title}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-brown/70">
-              Borrowed by
-            </label>
-            <select
-              name="user_id"
-              required
-              className="rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
-            >
-              {borrowers.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.display_name}
-                  {m.role === "admin" ? " (librarian)" : ""}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button className="rounded-sm bg-ink px-4 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
-            LOG CHECKOUT
-          </button>
-        </form>
+        <ManualCheckoutForm
+          availableBooks={availableBooks.map((b) => ({
+            id: b.id,
+            title: b.title,
+            cover_url: b.cover_url,
+          }))}
+          borrowers={borrowers.map((m) => ({
+            id: m.id,
+            display_name: m.display_name,
+            role: m.role,
+          }))}
+        />
       </section>
 
       {/* New book requests */}

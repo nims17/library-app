@@ -3,12 +3,10 @@ import { getCurrentProfile } from "@/lib/current-user";
 import BookCover from "@/components/BookCover";
 import StarRating from "@/components/StarRating";
 import LibrarianBanner from "@/components/LibrarianBanner";
-import {
-  addLibrarianPost,
-  deleteLibrarianPost,
-  updateReadingStatus,
-  logTip,
-} from "@/app/actions";
+import AddPostForm from "@/components/AddPostForm";
+import ReadingStatusForm from "@/components/ReadingStatusForm";
+import TipForm from "@/components/TipForm";
+import { deleteLibrarianPost } from "@/app/actions";
 import { VENMO_HANDLES, SUGGESTED_TIP_AMOUNT, venmoLink } from "@/lib/config";
 import { daysAgo } from "@/lib/time";
 
@@ -97,23 +95,8 @@ export default async function CommunityPage() {
   // ---------- Tip jar ----------
   const totalTipped = (tips || []).reduce((sum, t) => sum + Number(t.amount), 0);
 
-  async function addPostAction(formData: FormData) {
-    "use server";
-    const title = String(formData.get("title") || "").trim();
-    const body = String(formData.get("body") || "").trim();
-    if (!body) return;
-    await addLibrarianPost(title, body);
-  }
-
-  async function logTipAction(formData: FormData) {
-    "use server";
-    const amount = Number(formData.get("amount"));
-    const note = String(formData.get("note") || "").trim();
-    await logTip(amount, note);
-  }
-
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <main className="mx-auto max-w-6xl px-4 py-8">
       <h1 className="mb-1 font-serif text-2xl text-brown">
         Tabor Street Community
       </h1>
@@ -125,6 +108,9 @@ export default async function CommunityPage() {
 
       <LibrarianBanner librarians={bannerLibrarians} />
 
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        {/* Main column: librarian cards + feed */}
+        <div className="min-w-0">
       {/* Librarian cards */}
       {librarians.length > 0 && (
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -133,13 +119,6 @@ export default async function CommunityPage() {
               ? bookById.get(admin.currently_reading_book_id)
               : null;
             const isMe = profile?.id === admin.id;
-
-            async function saveStatus(formData: FormData) {
-              "use server";
-              const reading =
-                String(formData.get("currently_reading") || "") || null;
-              await updateReadingStatus(reading, null);
-            }
 
             return (
               <div
@@ -179,29 +158,13 @@ export default async function CommunityPage() {
                 </div>
 
                 {isMe && (
-                  <form
-                    action={saveStatus}
-                    className="mt-3 space-y-2 border-t border-brass/20 pt-3"
-                  >
-                    <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
-                      Currently reading
-                    </label>
-                    <select
-                      name="currently_reading"
-                      defaultValue={admin.currently_reading_book_id || ""}
-                      className="w-full rounded border border-brown/30 bg-transparent px-2 py-1 text-sm"
-                    >
-                      <option value="">— none —</option>
-                      {(books || []).map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.title}
-                        </option>
-                      ))}
-                    </select>
-                    <button className="rounded-sm bg-ink px-3 py-1 font-stamp text-[10px] tracking-widest text-parchment hover:bg-ink-dark">
-                      SAVE
-                    </button>
-                  </form>
+                  <ReadingStatusForm
+                    currentBookId={admin.currently_reading_book_id}
+                    books={(books || []).map((b) => ({
+                      id: b.id,
+                      title: b.title,
+                    }))}
+                  />
                 )}
               </div>
             );
@@ -210,34 +173,10 @@ export default async function CommunityPage() {
       )}
 
       {/* Write a post — any logged-in friend */}
-      {profile && (
-        <form
-          action={addPostAction}
-          className="mb-8 space-y-2 rounded-sm border border-brass/40 bg-card p-4"
-        >
-          <p className="font-stamp text-[10px] uppercase tracking-widest text-brown/50">
-            Post a note
-          </p>
-          <input
-            name="title"
-            placeholder="Title (optional)"
-            className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1 text-brown focus:border-ink focus:outline-none"
-          />
-          <textarea
-            name="body"
-            required
-            rows={3}
-            placeholder="What are you reading? What did you think of your last book?"
-            className="w-full rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown focus:border-ink focus:outline-none"
-          />
-          <button className="rounded-sm bg-ink px-4 py-1.5 font-stamp text-xs tracking-widest text-parchment hover:bg-ink-dark">
-            POST
-          </button>
-        </form>
-      )}
+      {profile && <AddPostForm />}
 
       {/* Post feed */}
-      <div className="mb-12 space-y-3">
+      <div className="space-y-3">
         {(posts || []).map((post) => {
           const isLibrarianPost = !!post.author?.is_public_librarian;
           const reading = post.author?.currently_reading_book_id
@@ -296,31 +235,28 @@ export default async function CommunityPage() {
           <p className="text-sm text-brown/50">No notes posted yet.</p>
         )}
       </div>
+        </div>
 
-      {/* Leaderboards */}
-      <section className="mb-12">
+        {/* Sidebar: leaderboards */}
+        <aside className="space-y-8 lg:pt-1">
+      <section>
         <h2 className="mb-3 font-serif text-lg text-brown">Top rated books</h2>
         <div className="space-y-2">
           {topBooks.map(({ book, avgRating, count }, i) => (
             <div
               key={book.id}
-              className="rounded-sm border border-brass/30 bg-card p-3"
+              className="rounded-sm border border-brass/30 bg-card p-2.5"
             >
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-medium text-brown">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs font-medium leading-snug text-brown">
                   {i + 1}. {book.title}
                 </p>
                 <StarRating value={avgRating} size="text-xs" />
               </div>
-              <p className="mt-1 text-xs text-brown/50">
+              <p className="mt-1 text-[11px] text-brown/50">
                 {book.genre || "Uncategorized"} · {count} review
                 {count !== 1 ? "s" : ""}
               </p>
-              {book.description && (
-                <p className="mt-1 line-clamp-2 text-xs text-brown/70">
-                  {book.description}
-                </p>
-              )}
             </div>
           ))}
           {topBooks.length === 0 && (
@@ -329,23 +265,23 @@ export default async function CommunityPage() {
         </div>
       </section>
 
-      <section className="mb-12">
+      <section>
         <h2 className="mb-3 font-serif text-lg text-brown">Top readers</h2>
         <div className="space-y-2">
           {topReaders.map((entry, i) => (
             <div
               key={entry.userId}
-              className="flex items-center justify-between rounded-sm border border-brass/30 bg-card p-3"
+              className="flex items-center justify-between rounded-sm border border-brass/30 bg-card p-2.5"
             >
-              <p className="font-hand text-xl text-ink">
+              <p className="font-hand text-lg text-ink">
                 {i + 1}. {entry.name}
               </p>
-              <div className="text-right text-sm text-brown/70">
+              <div className="text-right text-xs text-brown/70">
                 <p>
                   {entry.count} book{entry.count !== 1 ? "s" : ""}
                 </p>
                 {entry.recentCount > 0 && (
-                  <p className="text-xs text-green-800">
+                  <p className="text-[11px] text-green-800">
                     ↑ +{entry.recentCount} this week
                   </p>
                 )}
@@ -360,9 +296,11 @@ export default async function CommunityPage() {
           )}
         </div>
       </section>
+        </aside>
+      </div>
 
       {/* Tip jar */}
-      <section className="rounded-sm border-2 border-dashed border-brass/50 bg-card p-5">
+      <section className="mt-12 rounded-sm border-2 border-dashed border-brass/50 bg-card p-5">
         <h2 className="mb-1 font-serif text-lg text-brown">
           Tip your local librarian
         </h2>
@@ -400,38 +338,7 @@ export default async function CommunityPage() {
           </a>
         </div>
 
-        <form
-          action={logTipAction}
-          className="mb-5 flex flex-wrap items-end gap-2 border-t border-brass/30 pt-4"
-        >
-          <div>
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
-              I sent
-            </label>
-            <input
-              type="number"
-              name="amount"
-              step="0.01"
-              min="1"
-              defaultValue={SUGGESTED_TIP_AMOUNT}
-              required
-              className="w-24 rounded border border-brown/30 bg-transparent px-2 py-1 text-sm"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-brown/50">
-              Note (optional)
-            </label>
-            <input
-              name="note"
-              placeholder="for the new mysteries!"
-              className="w-full rounded border border-brown/30 bg-transparent px-2 py-1 text-sm"
-            />
-          </div>
-          <button className="rounded-sm border border-ink px-3 py-1.5 text-xs text-ink hover:bg-parchment">
-            Log my tip
-          </button>
-        </form>
+        <TipForm />
 
         <p className="mb-2 font-hand text-2xl text-ink">
           ${totalTipped.toFixed(2)} raised so far

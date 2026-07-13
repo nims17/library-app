@@ -20,15 +20,18 @@ export default function SettingsPanel({
   const [emailValue, setEmailValue] = useState(currentEmail || "");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function run(fn: () => Promise<void>, successMessage: string) {
     setBusy(true);
     setMessage(null);
+    setIsError(false);
     try {
       await fn();
-      setMessage(successMessage);
+      setMessage(`✓ ${successMessage}`);
     } catch (err) {
+      setIsError(true);
       setMessage(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setBusy(false);
@@ -73,14 +76,23 @@ export default function SettingsPanel({
         </button>
       </div>
 
-      {message && <p className="text-xs text-ink">{message}</p>}
+      {message && (
+        <p
+          className={`text-xs font-medium ${isError ? "text-ink" : "text-green-800"}`}
+        >
+          {message}
+        </p>
+      )}
 
       <div>
         <label className="mb-1 block text-xs text-brown/70">Name</label>
         <div className="flex gap-2">
           <input
             value={nameValue}
-            onChange={(e) => setNameValue(e.target.value)}
+            onChange={(e) => {
+              setNameValue(e.target.value);
+              setMessage(null);
+            }}
             className="flex-1 rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
           />
           <button
@@ -104,7 +116,10 @@ export default function SettingsPanel({
           <input
             type="email"
             value={emailValue}
-            onChange={(e) => setEmailValue(e.target.value)}
+            onChange={(e) => {
+              setEmailValue(e.target.value);
+              setMessage(null);
+            }}
             className="flex-1 rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
           />
           <button
@@ -130,7 +145,10 @@ export default function SettingsPanel({
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setMessage(null);
+            }}
             placeholder="At least 6 characters"
             className="flex-1 rounded border border-brown/30 bg-transparent px-2 py-1.5 text-sm text-brown"
           />

@@ -89,6 +89,7 @@ export default function RequestBookForm() {
           onChange={(e) => {
             setTitle(e.target.value);
             setConfirmed(null);
+            setDone(false);
           }}
           required
           className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
@@ -103,6 +104,7 @@ export default function RequestBookForm() {
           onChange={(e) => {
             setAuthor(e.target.value);
             setConfirmed(null);
+            setDone(false);
           }}
           className="w-full border-0 border-b border-brown/30 bg-transparent px-0 py-1.5 text-brown focus:border-ink focus:outline-none"
         />
