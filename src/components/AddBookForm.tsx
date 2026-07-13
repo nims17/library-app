@@ -30,6 +30,8 @@ export default function AddBookForm() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [saving, setSaving] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
+  const [duplicateNotice, setDuplicateNotice] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function lookUpOnGoogleBooks() {
     if (!title.trim()) {
@@ -61,8 +63,12 @@ export default function AddBookForm() {
   }
 
   function applyLookupResult(r: LookupResult) {
-    // Only fills fields the admin hasn't already typed something into.
-    if (!author.trim() && r.author) setAuthor(r.author);
+    // Title and author are always taken from the verified Google Books
+    // record — that gets the proper capitalization on the shelf even if
+    // the admin typed it in lowercase (like "nick bostrom"). The rest are
+    // supplementary fields, so those only fill in if left blank.
+    if (r.title) setTitle(r.title);
+    if (r.author) setAuthor(r.author);
     if (!description.trim() && r.description) setDescription(r.description);
     if (!genre.trim() && r.genre) setGenre(r.genre);
     if (!coverUrl.trim() && r.cover_url) setCoverUrl(r.cover_url);
@@ -97,6 +103,8 @@ export default function AddBookForm() {
     if (!title.trim() || !author.trim()) return;
     setSaving(true);
     setAdded(null);
+    setDuplicateNotice(null);
+    setSubmitError(null);
     try {
       const addedTitle = title.trim();
       await addBook({
@@ -118,6 +126,14 @@ export default function AddBookForm() {
       setLookupResults(null);
       setLookupError(null);
       setAdded(addedTitle);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Couldn't add that book.";
+      if (message.toLowerCase().includes("already in the catalog")) {
+        setDuplicateNotice(message);
+      } else {
+        setSubmitError(message);
+      }
     } finally {
       setSaving(false);
     }
@@ -139,6 +155,8 @@ export default function AddBookForm() {
           onChange={(e) => {
             setTitle(e.target.value);
             setAdded(null);
+            setDuplicateNotice(null);
+            setSubmitError(null);
           }}
           placeholder="Title"
           required
@@ -163,7 +181,8 @@ export default function AddBookForm() {
           {lookingUp ? "LOOKING UP..." : "LOOK UP ON GOOGLE BOOKS"}
         </button>
         <span className="text-xs text-brown/50">
-          Fills in anything you haven&apos;t typed yet.
+          Verified title/author replace what you typed (proper
+          capitalization); other fields fill in anything left blank.
         </span>
       </div>
 
@@ -256,6 +275,15 @@ export default function AddBookForm() {
         rows={2}
         className="w-full rounded border border-brown/30 bg-transparent px-3 py-2 text-sm text-brown"
       />
+
+      {duplicateNotice && (
+        <p className="rounded-sm border border-brass/40 bg-parchment/70 px-2 py-1.5 text-xs text-brown">
+          📚 {duplicateNotice}
+        </p>
+      )}
+      {submitError && (
+        <p className="text-xs text-ink">{submitError}</p>
+      )}
 
       <button
         type="submit"

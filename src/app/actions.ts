@@ -7,6 +7,49 @@ import { redirect } from "next/navigation";
 import { sendEmail } from "@/lib/email";
 import { LIBRARIAN_EMAILS, SITE_URL } from "@/lib/config";
 
+// Looks the title/author up against Google Books server-side and, if a
+// confident match is found (same title once case/whitespace is ignored),
+// returns the verified title/author so callers can store the properly
+// capitalized version — even if the admin/member typed it in lowercase and
+// never used the UI's "look up" button themselves.
+async function verifyBookViaGoogleBooks(
+  title: string,
+  author: string
+): Promise<{ title: string; author: string | null } | null> {
+  const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+  if (!apiKey || !title.trim()) return null;
+
+  let q = `intitle:${title.trim()}`;
+  if (author.trim()) q += `+inauthor:${author.trim()}`;
+
+  const url = new URL("https://www.googleapis.com/books/v1/volumes");
+  url.searchParams.set("q", q);
+  url.searchParams.set("maxResults", "3");
+  url.searchParams.set("fields", "items(volumeInfo(title,authors))");
+  url.searchParams.set("key", apiKey);
+
+  try {
+    const res = await fetch(url.toString());
+    if (!res.ok) return null;
+    const json = await res.json();
+    const items = (json.items || []) as Array<{
+      volumeInfo?: { title?: string; authors?: string[] };
+    }>;
+    const normalizedInput = title.trim().toLowerCase();
+    const match = items.find(
+      (item) =>
+        item.volumeInfo?.title?.trim().toLowerCase() === normalizedInput
+    );
+    if (!match?.volumeInfo?.title) return null;
+    return {
+      title: match.volumeInfo.title,
+      author: match.volumeInfo.authors?.join(", ") || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ---------- Auth ----------
 
 export async function signOut() {
@@ -176,6 +219,13 @@ export async function submitNewBookRequest(
   const normalizedTitle = title.trim().toLowerCase();
   if (!normalizedTitle) throw new Error("Title can't be empty");
 
+  // Auto-verify against Google Books so the request (and later, the
+  // catalog entry the librarian creates from it) gets the properly
+  // capitalized title/author, even if the member typed it in lowercase.
+  const verified = await verifyBookViaGoogleBooks(title, author);
+  const finalTitle = verified?.title || title;
+  const finalAuthor = verified?.author || author;
+
   // Already in the catalog?
   const { data: existingBooks } = await supabase
     .from("books")
@@ -206,16 +256,19 @@ export async function submitNewBookRequest(
     ? `${note}${note ? "\n\n" : ""}Confirmed on Google Books: ${googleBooksUrl}`
     : note;
 
-  const { error } = await supabase
-    .from("new_book_requests")
-    .insert({ requested_by: profile.id, title, author, note: fullNote });
+  const { error } = await supabase.from("new_book_requests").insert({
+    requested_by: profile.id,
+    title: finalTitle,
+    author: finalAuthor,
+    note: fullNote,
+  });
   if (error) throw new Error(error.message);
 
   await sendEmail({
     to: LIBRARIAN_EMAILS,
-    subject: `New book request: ${title}`,
-    text: `${profile.display_name || "Someone"} requested "${title}"${
-      author ? ` by ${author}` : ""
+    subject: `New book request: ${finalTitle}`,
+    text: `${profile.display_name || "Someone"} requested "${finalTitle}"${
+      finalAuthor ? ` by ${finalAuthor}` : ""
     }.${note ? `\n\nTheir note: "${note}"` : ""}${
       googleBooksUrl ? `\n\nGoogle Books: ${googleBooksUrl}` : ""
     }\n\nReview it here: ${SITE_URL}/admin`,
@@ -238,7 +291,35 @@ export async function addBook(formData: {
   page_count?: number | null;
 }) {
   const supabase = await createClient();
-  const { error } = await supabase.from("books").insert(formData);
+
+  // Auto-verify against Google Books so the catalog always gets the
+  // properly capitalized title/author, even if the admin didn't use the
+  // "look up" button or typed it in lowercase.
+  const verified = await verifyBookViaGoogleBooks(
+    formData.title,
+    formData.author
+  );
+  const finalTitle = verified?.title || formData.title;
+  const finalAuthor = verified?.author || formData.author;
+
+  const normalizedTitle = finalTitle.trim().toLowerCase();
+  const { data: existingBooks } = await supabase
+    .from("books")
+    .select("title, author");
+  const duplicate = (existingBooks || []).find(
+    (b) => b.title.trim().toLowerCase() === normalizedTitle
+  );
+  if (duplicate) {
+    throw new Error(
+      `"${duplicate.title}" is already in the catalog${
+        duplicate.author ? ` (by ${duplicate.author})` : ""
+      }.`
+    );
+  }
+
+  const { error } = await supabase
+    .from("books")
+    .insert({ ...formData, title: finalTitle, author: finalAuthor });
   if (error) throw new Error(error.message);
   revalidatePath("/");
 }
