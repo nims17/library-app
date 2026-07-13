@@ -6,6 +6,7 @@ import SettingsPanel from "@/components/SettingsPanel";
 import AvatarPrompt from "@/components/AvatarPrompt";
 import LoanReviewForm from "@/components/LoanReviewForm";
 import StarRating from "@/components/StarRating";
+import MyReviewsList from "@/components/MyReviewsList";
 import { daysSince } from "@/lib/time";
 
 export default async function LibraryCardPage() {
@@ -21,7 +22,11 @@ export default async function LibraryCardPage() {
         .select("*, book:books(id, title, author)")
         .eq("user_id", profile.id)
         .order("checked_out_at", { ascending: false }),
-      supabase.from("reviews").select("*").eq("user_id", profile.id),
+      supabase
+        .from("reviews")
+        .select("*, book:books(id, title)")
+        .eq("user_id", profile.id)
+        .order("created_at", { ascending: false }),
       supabase.from("reviews").select("user_id, book_id"),
       supabase.from("loans").select("user_id, book_id"),
       supabase.from("profiles").select("id, display_name"),
@@ -31,6 +36,15 @@ export default async function LibraryCardPage() {
   const history = (loans || []).filter((l) => l.returned_at);
   const recalled = current.filter((l) => l.recall_requested_at);
   const reviewByBook = new Map((myReviews || []).map((r) => [r.book_id, r]));
+  const myReviewRows = (myReviews || [])
+    .filter((r) => r.book)
+    .map((r) => ({
+      id: r.id,
+      bookId: r.book!.id,
+      bookTitle: r.book!.title,
+      rating: r.rating,
+      thoughts: r.thoughts,
+    }));
 
   // ---------- Leaderboard rank ----------
   const loanSet = new Set(
@@ -170,6 +184,9 @@ export default async function LibraryCardPage() {
           <p className="text-sm text-brown/50">No history yet.</p>
         )}
       </div>
+
+      <h2 className="mb-3 mt-8 font-serif text-lg text-brown">My Reviews</h2>
+      <MyReviewsList reviews={myReviewRows} />
     </main>
   );
 }

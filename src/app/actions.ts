@@ -206,6 +206,29 @@ export async function submitReview(
   revalidatePath("/community");
 }
 
+export async function deleteReview(reviewId: string) {
+  const supabase = await createClient();
+  const profile = await getCurrentProfile();
+  if (!profile) throw new Error("Not logged in");
+
+  // The `user_id = profile.id` check here is belt-and-suspenders — RLS
+  // ("friends delete their own reviews") already restricts this to your
+  // own reviews at the database level.
+  const { data, error } = await supabase
+    .from("reviews")
+    .delete()
+    .eq("id", reviewId)
+    .eq("user_id", profile.id)
+    .select("book_id");
+  if (error) throw new Error(error.message);
+
+  const bookId = data?.[0]?.book_id;
+  if (bookId) revalidatePath(`/books/${bookId}`);
+  revalidatePath("/");
+  revalidatePath("/community");
+  revalidatePath("/card");
+}
+
 export async function submitNewBookRequest(
   title: string,
   author: string,

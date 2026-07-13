@@ -192,6 +192,8 @@ create policy "friends write their own reviews"
   on reviews for insert with check (auth.uid() = user_id);
 create policy "friends edit their own reviews"
   on reviews for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "friends delete their own reviews"
+  on reviews for delete using (auth.uid() = user_id);
 
 -- 8. LIBRARIAN'S CORNER ------------------------------------------------
 -- Blog-style posts from the admins (Vivek & Lasya) about what they're
